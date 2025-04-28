@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>movie site</title>
+
+    <!-- local css -->
+     <link rel="stylesheet" href="../public/styles/index.css">
+</head>
+<body>
+    <section id="header"></section>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', ()=>{
+            const h1 = document.createElement('h1');
+            h1.textContent = 'Welcome to my Express App!';
+            const p = document.createElement('p');
+            p.textContent = 'This is a simple HTML page rendered by express.';
+        
+            const header = document.getElementById('header');
+            header.appendChild(h1);
+            header.appendChild(p);
+        })
+    </script>
+</body>
+</html>
