@@ -2,6 +2,7 @@ const dotenv = require('dotenv');
 const express = require('express');
 //path
 const path = require('path');
+const moviesRoutes = require('./routes/movies.js')
 
 
 dotenv.config({ path: './config.env' });
@@ -24,8 +25,7 @@ app.get('/', (req, res) =>{
 
 
 
-// in-memory database
-const movies = [];
+
 
 // Middleware for simple validation
 const validateMovie = (req, res, next) => {
@@ -36,10 +36,11 @@ const validateMovie = (req, res, next) => {
 }
 
 // GET all movies
-app.get('/movies', (req, res)=>{
-    res.status(200).json(movies);
-    console.log('GET all movies', movies);
-})
+// app.get('/movies', (req, res)=>{
+//     res.status(200).json(movies);
+//     console.log('GET all movies', movies);
+// })
+app.use('/movies', moviesRoutes);
 
 // get a paticular movie by id
 app.get('/movies/:id', (req, res)=>{
