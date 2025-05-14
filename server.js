@@ -22,6 +22,10 @@ app.get('/', (req, res) =>{
     res.status(200).sendFile(path.join(__dirname, 'views', 'index.html'));
 })
 
+app.get('/contact', (req, res)=>{
+    res.status(200).sendFile(path.join(__dirname, 'views', 'contact.html'));
+})
+
 
 
 // in-memory database
