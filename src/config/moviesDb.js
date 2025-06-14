@@ -24,3 +24,15 @@ const movies = [
 ];
 
 exports.default = movies;
+
+
+
+/**
+ * 
+ */
+
+function greet(name) {
+  return `hello, ${name}`;
+}
+
+console.log(greet('eric'));
