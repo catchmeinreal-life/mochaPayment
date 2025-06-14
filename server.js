@@ -4,7 +4,7 @@ const express = require('express');
 const path = require('path');
 
 //cors
-const cors = express('cors');
+const cors = require('cors');
 
 
 dotenv.config({ path: './config.env' });
@@ -12,7 +12,7 @@ dotenv.config({ path: './config.env' });
 const app = express();
 app.use(express.json());
 
-app.use(cors);
+app.use(cors());
 
 // serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, 'public')));
@@ -22,35 +22,14 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'html');
 
 //routes
-const moviesRoute = require('./src/routes/moviesRoutes.js')
+const moviesRoute = require('./src/routes/moviesRoutes.js');
+const paymentRoute = require('./src/routes/paymentRoutes.js');
 app.use('/movies', moviesRoute);
+app.use('/pay', paymentRoute);
 
-//payment api
-const demoUsers = [
-    { name: "Matutu", accountNumber: "123456789", balance: 500},
-    { name: "Bob", accountNumber: "987654321", balance: 800}
-]
 
-app.post('/pay', (req, res) => {
-    const { sender, receiver, amount } = req.body;   //account numbers
 
-    const senderAccount = demoUsers.find( (user) => user.accountNumber === sender);
-    const receiverAccount = demoUsers.find( (user) => user.accountNumber === receiver);
 
-    //handle case where accounts number is wrong
-    if (!senderAccount || ! receiverAccount) {
-        return res.status(400).json({error: "Invalid Accounts numbers"});
-    }
-
-    if (senderAccount.balance < amount ) {
-        return res.status(400).json({error: "insufficiet funds"});
-    }
-
-    senderAccount.balance -= amount;
-    receiverAccount.balance += amount;
-
-    res.status(200).json({message: "Transaction successful", senderAccount, receiverAccount})
-})
 
 
 // Render HTML file
