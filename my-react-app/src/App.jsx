@@ -8,7 +8,7 @@ import Greeting from './components/Greeting';
 function App() {
   return (
     <div >
-      <Greeting name="world"/>
+      <Greeting name="world" />
     </div>
   )
 }
