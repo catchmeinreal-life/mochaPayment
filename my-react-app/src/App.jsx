@@ -1,16 +1,14 @@
-import { useState } from 'react'
-import React from 'react';
+// import { useState } from 'react'
+// import React from 'react';
+// import Greeting from './components/Greeting';
 
 // import './App.css'
 
 // import PaymentForm from './components/PaymentForm';
-import Greeting from './components/Greeting';
+// import Greeting from './components/Greeting';
+import Hello from './components/Hello';
 function App() {
-  return (
-    <div >
-      <Greeting name="world" />
-    </div>
-  )
+  return Hello('world');
 }
 
 
@@ -82,4 +80,4 @@ function App() {
 
 
 
-export default Greeting;
+export default App;

@@ -4,34 +4,30 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <!-- <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script> -->
     <title>Vite + React</title>
   </head>
   <body>
     <div id="root"></div>
+    
+    <script type="module" src="/src/main.jsx"></script>
 
-    <script type="text/babel">
 
-      function helloWorld(text) {
-        return <h1>Hello, {text}! </h1>;
+
+    <!-- <script type="text/babel">
+      function hello(text) {
+        return <h1> Hello, {text}</h1>
       }
 
-      const container = document.getElementById('root');
-      const root = ReactDOM.createRoot(container);
-      root.render(
-        <React.StrictMode>
-          {helloWorld('world') }
-        </React.StrictMode>
-      );
-      // root.render(
-      //   <React.StrictMode>
-      //     {helloworld('eric')}
-      //   </React.StrictMode>
-      // );
+      const myFirstElement = <h1>hello there</h1>
 
-    </script>
-    <!-- <script type="module" src="/src/main.jsx"></script> -->
+      ReactDOM.createRoot(document.getElementById('root')).render(
+        myFirstElement
+      );
+      
+    </script> -->
+   
   </body>
 </html>
