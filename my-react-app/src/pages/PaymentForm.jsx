@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 // import './PaymentForm.css'; // Optional: Add your CSS styles here
 
 
-function PaymentForm () {
+function PaymentForm ({onLogout, isAuthenticated}) {
   const [ sender, setSender] = useState('');
   const [ receiver, setReceiver] = useState('');
   const [ amount, setAmount] = useState('');
@@ -39,32 +39,36 @@ function PaymentForm () {
   }
 
   return (
-    <form action="" onSubmit={handleSubmit}>
-      <h1>Bank Transfer Payment</h1>
+    isAuthenticated ? (
+      <div>
+        <form action="" onSubmit={handleSubmit}>
+          <h1>Bank Transfer Payment</h1>
 
-      <label htmlFor="">
-        Sender Account:
-        <input type='text' value={sender} onChange={(e) => setSender(e.target.value)} 
-          required
-        />
-      </label>
-      
-      <label htmlFor="">
-        Receiver Account:
-        <input type='text' value={receiver} onChange={(e) => setReceiver(e.target.value)} 
-          required
-        />
-      </label>
-      <br />
-      <label htmlFor="">
-        Amount:
-        <input type='number' value={amount} onChange={(e) => setAmount(e.target.value)} 
-          required
-        />
-      </label>
+          <label htmlFor="">
+            Sender Account:
+            <input type='text' value={sender} onChange={(e) => setSender(e.target.value)} 
+              required
+            />
+          </label>
+          
+          <label htmlFor="">
+            Receiver Account:
+            <input type='text' value={receiver} onChange={(e) => setReceiver(e.target.value)} 
+              required
+            />
+          </label>
+          <br />
+          <label htmlFor="">
+            Amount:
+            <input type='number' value={amount} onChange={(e) => setAmount(e.target.value)} 
+              required
+            />
+          </label>
 
-      <button type='submit'>Send Payment</button>
-    </form>
+          <button type='submit'>Send Payment</button>
+        </form>
+      </div>
+    ) : <p>Please log in to transact</p>
   );
 };
 

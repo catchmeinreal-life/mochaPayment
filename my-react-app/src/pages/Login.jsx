@@ -1,33 +1,58 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Navigate} from 'react-router-dom';
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+
+  // Check if the user is already authenticated
+  // This is a simple check using localStorage, in a real application you would check with your authentication service
+  // and redirect to the dashboard if they are already logged in.
+  const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
+  
+  useEffect(() => {
+    // Check authentication status on component mount
+    const checkAuth = () => {
+      const authStatus = localStorage.getItem("isAuthenticated");
+      if (authStatus === "true") {
+        // Redirect to dashboard if already authenticated
+        // window.location.href = "/dashboard";
+        window.location.replace("/dashboard");
+      }
+    };
+    checkAuth();
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // Simple demo: accept any username/password
     localStorage.setItem("isAuthenticated", "true");
-    navigate("/dashboard");
+    // Redirect to dashboard after successful login
+    window.location.replace("/dashboard");
+    // In a real application, you would send the username and password to your authentication service here
   };
 
   return (
-    <div className="login-page">
-      <h1>Login Page</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="username">Username:</label>
-          <input type="text" id="username" name="username" required value={username} onChange={e => setUsername(e.target.value)} />
-        </div>
-        <div>
-          <label htmlFor="password">Password:</label>
-          <input type="password" id="password" name="password" required value={password} onChange={e => setPassword(e.target.value)} />
-        </div>
-        <button type="submit">Login</button>
-      </form>
-    </div>
+    isAuthenticated ? (
+      <Navigate to="/dashboard" replace />
+    ) : (
+
+      <div className="login-page">
+        <h1>Login Page</h1>
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label htmlFor="username">Username:</label>
+            <input type="text" id="username" name="username" required value={username} onChange={e => setUsername(e.target.value)} />
+          </div>
+          <div>
+            <label htmlFor="password">Password:</label>
+            <input type="password" id="password" name="password" required value={password} onChange={e => setPassword(e.target.value)} />
+          </div>
+          <button type="submit">Login</button>
+        </form>
+      </div>
+      
+    )
   );
 }
 

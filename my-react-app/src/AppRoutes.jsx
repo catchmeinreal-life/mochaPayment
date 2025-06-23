@@ -1,7 +1,4 @@
 import { Routes, Route, useNavigate } from "react-router-dom";
-
-import PaymentForm from "./pages/PaymentForm";
-import ProtectedRoute from "./components/ProtectedRoute";
 import { useState, useEffect } from "react";
 
 /** Pages 
@@ -11,9 +8,13 @@ import { useState, useEffect } from "react";
  * PaymentForm: Public page, used for making payments. 
  * 
 */
+import ProtectedRoute from "./components/ProtectedRoute";
+
+
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import PaymentForm from "./pages/PaymentForm";
 
 
 function AppRoutes() {
@@ -35,20 +36,13 @@ function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
+      {/* Public routes */}
       <Route path="/" element={<Home onLogout={handleLogout} isAuthenticated={isAuthenticated} />} />
-      <Route path="/dashboard"
-        element={
-          <ProtectedRoute isAuthenticated={isAuthenticated}>
-            <Dashboard />
-          </ProtectedRoute>
-        }
-      />
-      <Route path="/payment" element={
-        <ProtectedRoute isAuthenticated={isAuthenticated}>
-          <PaymentForm />
-        </ProtectedRoute>
-      } />
+      <Route path="/dashboard" element={<Dashboard onLogout={handleLogout} isAuthenticated={isAuthenticated} />} />
+      <Route path="/payment" element={<PaymentForm onLogout={handleLogout} isAuthenticated={isAuthenticated} />} />
+      <Route path="/login" element={<Login  isAuthenticated={isAuthenticated}/>} />
+
+      
       {/* Add more routes as needed */}
     </Routes>
   );

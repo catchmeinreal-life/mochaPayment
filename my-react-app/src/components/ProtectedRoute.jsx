@@ -2,7 +2,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 
 function ProtectedRoute({ children, isAuthenticated}) {
 
-    return isAuthenticated ? children : <Navigate to={'/login'} />;
+    return isAuthenticated ? children : <Navigate to={'/login'} replace />;
 
     // if (!isAuthenticated) {
     //     // Redirect them to the /login page, but save the current location they were
