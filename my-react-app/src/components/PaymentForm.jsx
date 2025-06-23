@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
 // import './PaymentForm.css'; // Optional: Add your CSS styles here
 
-class Sender{
-
-}
-
 function PaymentForm () {
   const [ sender, setSender] = useState('');
   const [ receiver, setReceiver] = useState('');
