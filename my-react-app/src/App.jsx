@@ -2,13 +2,17 @@
 // import React from 'react';
 // import Greeting from './components/Greeting';
 
+import { BrowserRouter } from "react-router-dom";
+import AppRoutes from "./AppRoutes";
+
 // import './App.css'
 
-import PaymentForm from './components/PaymentForm';
-// import Greeting from './components/Greeting';
-// import Hello from './components/Hello';
 function App() {
-  return PaymentForm();
+  return (
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
+  );
 }
 
 export default App;
