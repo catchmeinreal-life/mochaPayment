@@ -29,6 +29,12 @@ function Login() {
     localStorage.setItem("isAuthenticated", "true");
     // Redirect to dashboard after successful login
     window.location.replace("/dashboard");
+    window.location.pathname = "/dashboard";
+
+    
+    // You can also use the useNavigate hook from react-router-dom to navigate programmatically
+    // const navigate = useNavigate();
+    // navigate("/dashboard");
     // In a real application, you would send the username and password to your authentication service here
   };
 
