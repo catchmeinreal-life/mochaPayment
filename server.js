@@ -24,8 +24,12 @@ app.set('view engine', 'html');
 //routes
 const moviesRoute = require('./src/routes/moviesRoutes.js');
 const paymentRoute = require('./src/routes/paymentRoutes.js');
+const authRoutes = require('./src/routes/authRoutes.js')
 app.use('/movies', moviesRoute);
 app.use('/pay', paymentRoute);
+
+//client landing page
+app.use('/auth', authRoutes); 
 
 
 

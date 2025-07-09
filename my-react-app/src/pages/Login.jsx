@@ -1,9 +1,18 @@
 import { useState, useEffect } from 'react';
 import { Navigate} from 'react-router-dom';
 
+import { authService  } from '../services/mochaPayment';
+
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  //greetig component
+  const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
+
 
   // Check if the user is already authenticated
   // This is a simple check using localStorage, in a real application you would check with your authentication service
@@ -11,8 +20,27 @@ function Login() {
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
   
   useEffect(() => {
+    /**
+     * <div>{message}</div>
+     */
+    const greetUser = async () => {
+
+      try {
+        const response = await authService.signIn();
+        setMessage(response.data.message);
+        
+      } catch (error) {
+        setError(error.message)
+      }
+      
+     
+    }
+
     // Check authentication status on component mount
     const checkAuth = () => {
+
+
+
       const authStatus = localStorage.getItem("isAuthenticated");
       if (authStatus === "true") {
         // Redirect to dashboard if already authenticated
@@ -21,6 +49,7 @@ function Login() {
       }
     };
     checkAuth();
+    greetUser();
   }, []);
 
   const handleSubmit = (e) => {
@@ -44,6 +73,7 @@ function Login() {
     ) : (
 
       <div className="login-page">
+        <p>{ message ? message : error}</p>
         <h1>Login Page</h1>
         <form onSubmit={handleSubmit}>
           <div>

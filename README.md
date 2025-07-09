@@ -8,7 +8,27 @@ MochaPayment is a full-stack demo application featuring a Node.js/Express backen
 - React frontend with navigation
 - Express backend serving static and API routes
 
-## Getting Started
+## 🚀 Getting Started
+
+Welcome to the MochaPayment API integration! This section walks you through the complete user journey—from secure login to graceful logout.
+
+### 🔐 1. Authentication Flow
+- **Login Endpoint:** Users authenticate via `/api/auth/login` using valid credentials or OAuth (Google/GitHub).
+- **Token Issuance:** Upon successful login, the server responds with an encrypted JWT token stored in HTTP-only cookies or localStorage.
+- **Session Validation:** Protected endpoints validate the token on each request using middleware to ensure secure access.
+
+### 🧭 2. User Actions Post-Login
+Once authenticated, users can:
+- Access their dashboard with `/api/user/profile`.
+- Perform wallet operations like deposits, withdrawals, or transaction history (`/api/wallet`, `/api/transactions`).
+- Update personal settings via `/api/user/update`.
+
+### 🚪 3. Logout Flow
+- **Logout Endpoint:** When a user hits `/api/auth/logout`, the session token is invalidated and cleared from storage.
+- **Redirect or Confirmation:** Users are optionally redirected to the login screen or receive a logout confirmation.
+
+---
+
 
 ### Prerequisites
 - Node.js (v16+ recommended)
