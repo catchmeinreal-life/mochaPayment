@@ -1,4 +1,5 @@
 const dotenv = require('dotenv');
+dotenv.config({ path: './.env' });
 const express = require('express');
 //path
 const path = require('path');
@@ -7,7 +8,6 @@ const path = require('path');
 const cors = require('cors');
 
 
-dotenv.config({ path: './config.env' });
 
 const app = express();
 app.use(express.json());
