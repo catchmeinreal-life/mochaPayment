@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 
 /**Dashboard page
  * This page is protected and can only be accessed by authenticated users.
@@ -15,6 +15,7 @@ import { Navigate } from "react-router-dom";
  * 
  */
 
+
 function Dashboard({ onLogout , isAuthenticated }) {
   return (
     <div>
@@ -29,6 +30,7 @@ function Dashboard({ onLogout , isAuthenticated }) {
           {/* Add more user-specific information here */}
           <p>For example, you can show user account details, payment history, etc.</p>
           <p>Feel free to customize this page as needed.</p>
+          <h2><Link to='/payment' replace>Send money</Link></h2>
         </div>
 
       ) : (
@@ -43,18 +45,8 @@ function Dashboard({ onLogout , isAuthenticated }) {
 }
 
 export default Dashboard;
-export function Home({ onLogout, isAuthenticated }) {
-  return (
-    <div>
-      <h1>Home Page</h1>
-      {isAuthenticated ? (
-        <div>
-          <p>Welcome back!</p>
-          <button onClick={onLogout}>Logout</button>
-        </div>
-      ) : (
-        <p>Please log in to access your dashboard.</p>
-      )}
-    </div>
-  );
-}
+
+
+
+
+

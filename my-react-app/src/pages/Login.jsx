@@ -23,35 +23,17 @@ function Login() {
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
   
   useEffect(() => {
-    /**
-     * <div>{message}</div>
-     */
     const greetUser = async () => {
-
       try {
         const response = await authService.signIn();
         setMessage(response.data.message);
-        
       } catch (error) {
         setError(error.message)
       }
-      
-     
     }
 
     // Check authentication status on component mount
-    const checkAuth = () => {
-
-
-
-      const authStatus = localStorage.getItem("isAuthenticated");
-      if (authStatus === "true") {
-        // Redirect to dashboard if already authenticated
-        // window.location.href = "/dashboard";
-        window.location.replace("/dashboard");
-      }
-    };
-    checkAuth();
+   
     greetUser();
   }, []);
 
@@ -72,7 +54,7 @@ function Login() {
 
   return (
     isAuthenticated ? (
-      <Navigate to="/dashboard" replace />
+      <Navigate to="/" replace />
     ) : (
       <>
         <NavBar/>

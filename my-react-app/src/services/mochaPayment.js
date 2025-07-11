@@ -3,7 +3,7 @@ import axios from 'axios'; //handling payment with MochaApi
 //axios instance with base URL
 
 const MochaApi = axios.create({
-    baseURL: import.meta.env.VITE_MOCHA_API_URL || 'https://api.mocha.com',
+    baseURL: import.meta.env.VITE_MOCHA_API_URL,
     headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${import.meta.env.VITE_MOCHA_API_KEY}`,
