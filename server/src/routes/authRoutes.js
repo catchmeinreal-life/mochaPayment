@@ -11,14 +11,11 @@ const router = express.Router();
 
 // controllers (validation)
 const validateMovie = require('../controllers/moviesController.js');
-const login  = require('../controllers/authController.js')
 const authMiddleware = require('../middleware/authMiddleware.js');
 
 router.get('/login',authMiddleware, (req, res) => {
     res.status(200).json({ message : "welcome to mochaPay"});
 })
-
-router.post('/login', login);
 
 
 
