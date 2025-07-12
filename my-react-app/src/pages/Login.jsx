@@ -1,5 +1,5 @@
-import { useState, useEffect} from 'react';
-import { Link, useNavigate, Navigate} from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, Link} from 'react-router-dom';
 
 import { authService  } from '../services/mochaPayment';
 import { ToastContainer, toast } from "react-toastify";
@@ -9,23 +9,25 @@ import NavBar from '../components/NavBar';
 import '../styles/login.css'; //styling
 
 function Login() {
-  const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  
 
   //greetig component
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    localStorage.getItem('isAuthenticated') === 'true'
+  );
+
+  const navigate = useNavigate();
 
 
 
   // Check if the user is already authenticated
   // This is a simple check using localStorage, in a real application you would check with your authentication service
   // and redirect to the dashboard if they are already logged in.
-  const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
+  
   
   useEffect(() => {
     const greetUser = async () => {
@@ -46,23 +48,21 @@ function Login() {
     e.preventDefault();
     const userData = {
       email,
-      password,
+      password
     };
     try {
       const response = await authService.login(userData)
-      toast.success(response.message);
+      toast.success(response.message, {
+      });
+      // setIsAuthenticated(true)/;
       localStorage.setItem("isAuthenticated", "true");
-      setTimeout(()=>{
-        navigate("/", { replace: true });
-      }, 3000);
-      
+      navigate('/');
 
     } catch (error) {
-      toast.error(error.message)
+      toast(error.message)
     }
     // Simple demo: accept any username/password
     // Redirect to dashboard after successful login
-    // window.location.pathname = "/dashboard";
 
     
     // You can also use the useNavigate hook from react-router-dom to navigate programmatically
@@ -70,11 +70,12 @@ function Login() {
     // navigate("/dashboard");
     // In a real application, you would send the username and password to your authentication service here
   };
+  //  if (isAuthenticated) {
+  //    // automatic redirect
+  //   return null;
+  // }
 
   return (
-    isAuthenticated ? (
-      <Navigate to="/" replace />
-    ) : (
       <>
         <NavBar/>
         <div className="login-page">
@@ -86,7 +87,7 @@ function Login() {
           <form onSubmit={handleSubmit}>
             <div>
               <label htmlFor="email">Email:</label>
-              <input type="text" id="username" name="username" required value={email} onChange={e => setEmail(e.target.value)} />
+              <input type="email" id="email" name="email" required value={email} onChange={e => setEmail(e.target.value)} />
             </div>
             <div>
               <label htmlFor="password">Password:</label>
@@ -97,8 +98,6 @@ function Login() {
         </div>
         <ToastContainer />
       </>
-      
-    )
   );
 }
 
