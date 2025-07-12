@@ -4,31 +4,20 @@ import { useNavigate, Link} from 'react-router-dom';
 import { authService  } from '../services/mochaPayment';
 import { ToastContainer, toast } from "react-toastify";
 
-//components
 import NavBar from '../components/NavBar';
 import '../styles/login.css'; //styling
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  //greetig component
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(
     localStorage.getItem('isAuthenticated') === 'true'
   );
-
   const navigate = useNavigate();
 
-
-
-  // Check if the user is already authenticated
-  // This is a simple check using localStorage, in a real application you would check with your authentication service
-  // and redirect to the dashboard if they are already logged in.
-  
-  
   useEffect(() => {
     const greetUser = async () => {
       try {
@@ -39,8 +28,7 @@ function Login() {
       }
     }
 
-    // Check authentication status on component mount
-   
+
     greetUser();
   }, []);
 
@@ -56,24 +44,11 @@ function Login() {
       });
       // setIsAuthenticated(true)/;
       localStorage.setItem("isAuthenticated", "true");
-      navigate('/');
 
     } catch (error) {
       toast(error.message)
     }
-    // Simple demo: accept any username/password
-    // Redirect to dashboard after successful login
-
     
-    // You can also use the useNavigate hook from react-router-dom to navigate programmatically
-    // const navigate = useNavigate();
-    // navigate("/dashboard");
-    // In a real application, you would send the username and password to your authentication service here
-  };
-  //  if (isAuthenticated) {
-  //    // automatic redirect
-  //   return null;
-  // }
 
   return (
       <>
@@ -99,6 +74,7 @@ function Login() {
         <ToastContainer />
       </>
   );
+}
 }
 
 export default Login;
