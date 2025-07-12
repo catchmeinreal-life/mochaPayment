@@ -10,17 +10,9 @@ import '../styles/login.css'; //styling
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
-  //greetig component
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-
-
-
-  // Check if the user is already authenticated
-  // This is a simple check using localStorage, in a real application you would check with your authentication service
-  // and redirect to the dashboard if they are already logged in.
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
   
   useEffect(() => {
@@ -32,25 +24,14 @@ function Login() {
         setError(error.message)
       }
     }
-
-    // Check authentication status on component mount
-   
     greetUser();
   }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Simple demo: accept any username/password
     localStorage.setItem("isAuthenticated", "true");
-    // Redirect to dashboard after successful login
     window.location.replace("/dashboard");
     window.location.pathname = "/dashboard";
-
-    
-    // You can also use the useNavigate hook from react-router-dom to navigate programmatically
-    // const navigate = useNavigate();
-    // navigate("/dashboard");
-    // In a real application, you would send the username and password to your authentication service here
   };
 
   return (
