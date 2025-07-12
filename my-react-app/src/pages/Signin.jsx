@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Navigate, Link} from 'react-router-dom';
 import { authService  } from '../services/mochaPayment';
+import { ToastContainer, toast } from "react-toastify";
 
 import '../styles/signinPage.css'; //styling
 
@@ -25,6 +26,7 @@ function SignIn() {
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
   
   useEffect(() => {
+
     const greetUser = async () => {
       try {
         const response = await authService.signIn();
@@ -35,17 +37,25 @@ function SignIn() {
     }
 
     // Check authentication status on component mount
-   
     greetUser();
+    
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simple demo: accept any username/password
-    localStorage.setItem("isAuthenticated", "true");
-    // Redirect to dashboard after successful login
-    window.location.replace("/dashboard");
-    window.location.pathname = "/dashboard";
+    const userData = {
+      email,
+      password,
+      confirmPassword
+    };
+    try {
+      const response = await authService.register(userData)
+      toast.success(response.message);
+
+      localStorage.setItem("isAuthenticated", "true");
+    } catch (error) {
+      toast(error.message)
+    }
 
     
     // You can also use the useNavigate hook from react-router-dom to navigate programmatically
@@ -82,6 +92,7 @@ function SignIn() {
             <button type="submit">Sign-In</button>
           </form>
         </div>
+        <ToastContainer />
       </>
       
     )

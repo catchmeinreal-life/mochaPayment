@@ -1,15 +1,19 @@
-import { useState, useEffect } from 'react';
-import { Navigate, Link} from 'react-router-dom';
+import { useState, useEffect} from 'react';
+import { Link, useNavigate, Navigate} from 'react-router-dom';
 
 import { authService  } from '../services/mochaPayment';
+import { ToastContainer, toast } from "react-toastify";
 
 //components
 import NavBar from '../components/NavBar';
 import '../styles/login.css'; //styling
 
 function Login() {
-  const [username, setUsername] = useState("");
+  const navigate = useNavigate();
+
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  
 
   //greetig component
   const [message, setMessage] = useState('');
@@ -38,13 +42,27 @@ function Login() {
     greetUser();
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    const userData = {
+      email,
+      password,
+    };
+    try {
+      const response = await authService.login(userData)
+      toast.success(response.message);
+      localStorage.setItem("isAuthenticated", "true");
+      setTimeout(()=>{
+        navigate("/", { replace: true });
+      }, 3000);
+      
+
+    } catch (error) {
+      toast.error(error.message)
+    }
     // Simple demo: accept any username/password
-    localStorage.setItem("isAuthenticated", "true");
     // Redirect to dashboard after successful login
-    window.location.replace("/dashboard");
-    window.location.pathname = "/dashboard";
+    // window.location.pathname = "/dashboard";
 
     
     // You can also use the useNavigate hook from react-router-dom to navigate programmatically
@@ -67,8 +85,8 @@ function Login() {
           <p>Register an Account?<span><Link to='/signin' replace>Sign-In</Link></span></p>
           <form onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="username">Username:</label>
-              <input type="text" id="username" name="username" required value={username} onChange={e => setUsername(e.target.value)} />
+              <label htmlFor="email">Email:</label>
+              <input type="text" id="username" name="username" required value={email} onChange={e => setEmail(e.target.value)} />
             </div>
             <div>
               <label htmlFor="password">Password:</label>
@@ -77,6 +95,7 @@ function Login() {
             <button type="submit">Login</button>
           </form>
         </div>
+        <ToastContainer />
       </>
       
     )
