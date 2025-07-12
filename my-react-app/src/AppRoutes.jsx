@@ -12,9 +12,11 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 
 import Home from "./pages/Home";
-import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import SignIn from "./pages/Signin";
+import Dashboard from "./pages/Dashboard";
 import PaymentForm from "./pages/PaymentForm";
+import NotFound from "./pages/NotFound";
 
 
 function AppRoutes() {
@@ -36,11 +38,13 @@ function AppRoutes() {
 
   return (
     <Routes>
+      <Route path="/login" element={<Login  isAuthenticated={isAuthenticated}/>} />
+      <Route path="/signin" element={<SignIn  isAuthenticated={isAuthenticated}/>} />
       {/* Public routes */}
       <Route path="/" element={<Home onLogout={handleLogout} isAuthenticated={isAuthenticated} />} />
       <Route path="/dashboard" element={<Dashboard onLogout={handleLogout} isAuthenticated={isAuthenticated} />} />
       <Route path="/payment" element={<PaymentForm onLogout={handleLogout} isAuthenticated={isAuthenticated} />} />
-      <Route path="/login" element={<Login  isAuthenticated={isAuthenticated}/>} />
+      <Route path="*" element={<NotFound />} />
 
       
       {/* Add more routes as needed */}

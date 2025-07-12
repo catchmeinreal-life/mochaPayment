@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Navigate, Link} from 'react-router-dom';
-
 import { authService  } from '../services/mochaPayment';
+
+import '../styles/signinPage.css'; //styling
 
 //components
 import NavBar from '../components/NavBar';
-import '../styles/login.css'; //styling
 
-function Login() {
-  const [username, setUsername] = useState("");
+function SignIn() {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   //greetig component
   const [message, setMessage] = useState('');
@@ -59,22 +60,26 @@ function Login() {
     ) : (
       <>
         <NavBar/>
-        <div className="login-page">
-          <div className="message">
+        <div className="signin-page">
+          <div className='message'>
             <p>{ message ? message : error}</p>
           </div>
-          <h1>Login Page</h1>
-          <p>Register an Account?<span><Link to='/signin' replace>Sign-In</Link></span></p>
+          <h1>Sign In Page</h1>
+          <p>Already have an Account?<span><Link to='/login' replace>Log-In</Link></span></p>
           <form onSubmit={handleSubmit}>
             <div>
               <label htmlFor="username">Username:</label>
-              <input type="text" id="username" name="username" required value={username} onChange={e => setUsername(e.target.value)} />
+              <input type="text" id="email" name="email" required value={email} onChange={e => setEmail(e.target.value)} />
             </div>
             <div>
               <label htmlFor="password">Password:</label>
               <input type="password" id="password" name="password" required value={password} onChange={e => setPassword(e.target.value)} />
             </div>
-            <button type="submit">Login</button>
+            <div>
+              <label htmlFor="confirmPassword">Confirm Password:</label>
+              <input type="password" id="confirmPassword" name="confirmPassword" required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
+            </div>
+            <button type="submit">Sign-In</button>
           </form>
         </div>
       </>
@@ -83,4 +88,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default SignIn;
