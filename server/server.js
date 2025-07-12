@@ -1,21 +1,18 @@
 const dotenv = require('dotenv');
+dotenv.config({ path: './.env' });
+
 const express = require('express');
-//path
-const path = require('path');
+const path = require('path'); //path
+const cors = require('cors');//cors
 
-//cors
-const cors = require('cors');
-
-
-dotenv.config({ path: './config.env' });
+// database
+const connectDB = require('./src/config/db.js');
 
 const app = express();
 app.use(express.json());
-
 app.use(cors());
-
 // serve static files from the "public" directory
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'))); 
 
 // set the views directory and the view engine
 app.set('views', path.join(__dirname, 'views'));
@@ -46,8 +43,9 @@ app.get('/contact', (req, res)=>{
 })
 
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
+    connectDB();
     console.log(`Server is running on port :${PORT}`)
 })

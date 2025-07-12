@@ -1,20 +1,23 @@
 import { useState, useEffect } from 'react';
-import { Navigate, Link} from 'react-router-dom';
+import { useNavigate, Link} from 'react-router-dom';
 
 import { authService  } from '../services/mochaPayment';
+import { ToastContainer, toast } from "react-toastify";
 
-//components
 import NavBar from '../components/NavBar';
 import '../styles/login.css'; //styling
 
 function Login() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
-  
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    localStorage.getItem('isAuthenticated') === 'true'
+  );
+  const navigate = useNavigate();
+
   useEffect(() => {
     const greetUser = async () => {
       try {
@@ -24,20 +27,30 @@ function Login() {
         setError(error.message)
       }
     }
+
+
     greetUser();
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    localStorage.setItem("isAuthenticated", "true");
-    window.location.replace("/dashboard");
-    window.location.pathname = "/dashboard";
-  };
+    const userData = {
+      email,
+      password
+    };
+    try {
+      const response = await authService.login(userData)
+      toast.success(response.message, {
+      });
+      // setIsAuthenticated(true)/;
+      localStorage.setItem("isAuthenticated", "true");
+
+    } catch (error) {
+      toast(error.message)
+    }
+    
 
   return (
-    isAuthenticated ? (
-      <Navigate to="/" replace />
-    ) : (
       <>
         <NavBar/>
         <div className="login-page">
@@ -48,8 +61,8 @@ function Login() {
           <p>Register an Account?<span><Link to='/signin' replace>Sign-In</Link></span></p>
           <form onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="username">Username:</label>
-              <input type="text" id="username" name="username" required value={username} onChange={e => setUsername(e.target.value)} />
+              <label htmlFor="email">Email:</label>
+              <input type="email" id="email" name="email" required value={email} onChange={e => setEmail(e.target.value)} />
             </div>
             <div>
               <label htmlFor="password">Password:</label>
@@ -58,10 +71,10 @@ function Login() {
             <button type="submit">Login</button>
           </form>
         </div>
+        <ToastContainer />
       </>
-      
-    )
   );
+}
 }
 
 export default Login;
