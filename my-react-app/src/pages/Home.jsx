@@ -4,7 +4,7 @@ import NavBar from "../components/NavBar";
 export default function Home({ onLogout, isAuthenticated }) {
   return (
     <>
-      <NavBar />
+      <NavBar isAuthenticated={isAuthenticated} onLogout={onLogout} />
       <div>
         <h1>Home Page</h1>
         {isAuthenticated ? (

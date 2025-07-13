@@ -49,6 +49,7 @@
 }
 
 .signin-page input[type="text"],
+.signin-page input[type="email"],
 .signin-page input[type="password"] {
   padding: 0.6rem;
   border: 1px solid #ccc;

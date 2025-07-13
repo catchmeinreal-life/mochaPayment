@@ -1,80 +1,81 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, Link} from 'react-router-dom';
-
-import { authService  } from '../services/mochaPayment';
-import { ToastContainer, toast } from "react-toastify";
-
+import React from 'react';
+import { useNavigate, Navigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import NavBar from '../components/NavBar';
-import '../styles/login.css'; //styling
+import { authService } from '../services/mochaPayment';
+import { useState, useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
 
-function Login() {
+import '../styles/login.css';
+
+function Login({ isAuthenticated }) {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState('');
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    localStorage.getItem('isAuthenticated') === 'true'
-  );
-  const navigate = useNavigate();
+  const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    const greetUser = async () => {
-      try {
-        const response = await authService.signIn();
-        setMessage(response.data.message);
-      } catch (error) {
-        setError(error.message)
-      }
-    }
-
-
-    greetUser();
-  }, []);
-
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    const userData = {
-      email,
-      password
-    };
+    setIsLoading(true);
     try {
-      const response = await authService.login(userData)
-      toast.success(response.message, {
-      });
-      // setIsAuthenticated(true)/;
-      localStorage.setItem("isAuthenticated", "true");
-
+      const response = await authService.login({ email, password });
+      console.log("Login response:", response.message);
+      // if (response.success) {
+      //   localStorage.setItem("isAuthenticated", "true");
+      //   navigate("/");
+      // } else {
+      //   // Handle login failure
+      // }
     } catch (error) {
-      toast(error.message)
+      console.error("Login failed:", error);
     }
-    
+  };
 
+
+  // If the user is already authenticated, redirect to home
   return (
-      <>
-        <NavBar/>
-        <div className="login-page">
-          <div className="message">
-            <p>{ message ? message : error}</p>
+    <>
+     { isAuthenticated ? 
+      <Navigate to="/" />
+       : 
+       <>
+          <NavBar />
+          <div className="login-page">
+
+            <div className='message'>
+              <p>{ message ? message : error}</p>
+            </div>
+
+            <h1>Login Page</h1>
+
+            <p>Already have an Account? <span><Link to="/signin" replace>Register</Link></span></p>
+            <form className='login-form' onSubmit={handleLogin}>
+
+              <div className='form-group'>
+                <label htmlFor="email">Email:</label>
+                <input type="email" placeholder="Email" autoComplete='user@mail.com' 
+                  value={email} onChange={e => setEmail(e.target.value)} required
+                />
+              </div>
+
+              <div className='form-group'>
+                <label htmlFor="password">Password:</label>
+                <input type="password" placeholder="Password" autoComplete='current-password'
+                  value={password} onChange={e => setPassword(e.target.value)} required
+                />
+              </div>
+
+              <button type="submit">Login</button>
+            </form>
+            <ToastContainer />
           </div>
-          <h1>Login Page</h1>
-          <p>Register an Account?<span><Link to='/signin' replace>Sign-In</Link></span></p>
-          <form onSubmit={handleSubmit}>
-            <div>
-              <label htmlFor="email">Email:</label>
-              <input type="email" id="email" name="email" required value={email} onChange={e => setEmail(e.target.value)} />
-            </div>
-            <div>
-              <label htmlFor="password">Password:</label>
-              <input type="password" id="password" name="password" required value={password} onChange={e => setPassword(e.target.value)} />
-            </div>
-            <button type="submit">Login</button>
-          </form>
-        </div>
-        <ToastContainer />
-      </>
+       </>
+      
+     }
+    </>
   );
-}
 }
 
 export default Login;
