@@ -79,15 +79,15 @@ function SignIn() {
           <form onSubmit={handleSubmit}>
             <div>
               <label htmlFor="username">Username:</label>
-              <input type="text" id="username" name="username" required value={username} onChange={e => setUsername(e.target.value)} />
+              <input type="text" id="username" name="username" required value={username} onChange={e => setUsername(e.target.value)} autoComplete='user123'/>
             </div>
             <div>
               <label htmlFor="email">Email:</label>
-              <input type="email" id="email" name="email" required value={email} onChange={e => setEmail(e.target.value)} />
+              <input type="email" id="email" name="email" required value={email} onChange={e => setEmail(e.target.value)} autoComplete='user@email.com'/>
             </div>
             <div>
               <label htmlFor="password">Password:</label>
-              <input type="password" id="password" name="password" required value={password} onChange={e => setPassword(e.target.value)} />
+              <input type="password" id="password" name="password" required value={password} onChange={e => setPassword(e.target.value)} autoComplete='password' />
             </div>
             
             <button type="submit">Sign-In</button>
