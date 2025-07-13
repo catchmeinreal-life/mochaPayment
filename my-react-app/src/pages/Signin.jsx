@@ -9,9 +9,9 @@ import '../styles/signinPage.css'; //styling
 import NavBar from '../components/NavBar';
 
 function SignIn() {
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
 
   //greetig component
   const [message, setMessage] = useState('');
@@ -44,9 +44,9 @@ function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const userData = {
+      username,
       email,
       password,
-      confirmPassword
     };
     try {
       const response = await authService.register(userData)
@@ -79,16 +79,17 @@ function SignIn() {
           <form onSubmit={handleSubmit}>
             <div>
               <label htmlFor="username">Username:</label>
-              <input type="text" id="email" name="email" required value={email} onChange={e => setEmail(e.target.value)} />
+              <input type="text" id="username" name="username" required value={username} onChange={e => setUsername(e.target.value)} />
+            </div>
+            <div>
+              <label htmlFor="email">Email:</label>
+              <input type="email" id="email" name="email" required value={email} onChange={e => setEmail(e.target.value)} />
             </div>
             <div>
               <label htmlFor="password">Password:</label>
               <input type="password" id="password" name="password" required value={password} onChange={e => setPassword(e.target.value)} />
             </div>
-            <div>
-              <label htmlFor="confirmPassword">Confirm Password:</label>
-              <input type="password" id="confirmPassword" name="confirmPassword" required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
-            </div>
+            
             <button type="submit">Sign-In</button>
           </form>
         </div>
