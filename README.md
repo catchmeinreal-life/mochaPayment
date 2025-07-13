@@ -10,7 +10,7 @@ MochaPayment is a full-stack demo application featuring a Node.js/Express backen
 
 ## 🚀 Getting Started
 
-Welcome to the MochaPayment API integration! This section walks you through the complete user journey—from secure login to graceful logout.
+Welcome to the MochaPayment ecosystem.
 
 ### 🔐 1. Authentication Flow
 - **Login Endpoint:** Users authenticate via `/api/auth/login` using valid credentials or OAuth (Google/GitHub).
@@ -59,7 +59,7 @@ npm run dev
 ```
 
 - Backend: http://localhost:3000
-- Frontend: http://localhost:5173 (or as shown in your terminal)
+- Frontend: http://localhost:5173
 
 ## Usage
 - Visit `/login` to log in (any credentials work in demo mode).
@@ -75,16 +75,3 @@ npm run dev
 
 ## License
 This project is for demo and educational purposes.
-
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
