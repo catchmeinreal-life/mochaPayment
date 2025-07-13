@@ -70,8 +70,12 @@ MochaApi.interceptors.response.use(
 export const authService = {
     // Register a new user
     register: async (userData) => {
-      console.log(userData);
       const response = await MochaApi.post('/auth/signup',userData);
+      console.log(response.data);
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+      }
       return response.data;
     },
   
