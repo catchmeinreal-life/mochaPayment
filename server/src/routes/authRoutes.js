@@ -11,15 +11,15 @@ const router = express.Router();
 
 // controllers (validation)
 const validateMovie = require('../controllers/moviesController.js');
+const loginUser = require('../controllers/authController.js');
+//middleware
 const authMiddleware = require('../middleware/authMiddleware.js');
 
-router.get('/login',authMiddleware, (req, res) => {
+router.get('/login', (req, res) => {
     res.status(200).json({ message : "welcome to mochaPay"});
 });
 
-router.post('/login', (req, res) => {
-    res.status(200).json({message: "login to home page"})
-});
+router.post('/login',loginUser);
 
 router.post('/signup', (req, res) => {
     res.status(200).json({message: "user registered"})
