@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 
 import '../styles/navbar.css'; // Importing the CSS for styling
 
-function NavBar() {
+function NavBar({ isAuthenticated, onLogout }) {
     const location = useLocation();
     const authPages = location.pathname === '/login' || location.pathname === '/signin';
     const homepage = location.pathname === '/';
@@ -43,14 +43,20 @@ function NavBar() {
                         <li><Link to='/'>Home</Link></li>
                         <li><Link to='/about'>About Us</Link></li>
                         <li><Link to='/contact'>Contact Us</Link></li>
-                        { !homepage && <li><Link to='/dashboard'>Dashboard</Link></li> }
-                        { !homepage && <li><Link to='/payment'>Payment</Link></li> }
+                        { homepage && <li><Link to='/dashboard'>Dashboard</Link></li> }
+                        { homepage && <li><Link to='/payment'>Payment</Link></li> }
                     </ul>
                 </nav>  
                
                 <div className="header-icon">
-                    <Link to="/login" className="login-link">Login</Link>
-                    <Link to="/signin" className="login-link">SignIn</Link>
+                    { isAuthenticated ? (
+                        <button className="logout-btn" onClick={onLogout}>Logout</button>
+                    ) : (
+                        <>
+                            <Link to="/login" className="login-link">Login</Link>
+                            <Link to="/signin" className="signin-link">SignIn</Link>
+                        </>
+                    )}
                 </div>
             </header>
         }
