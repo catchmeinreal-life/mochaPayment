@@ -16,7 +16,7 @@ const {loginUser, registerUser, verifyToken} = require('../controllers/authContr
 const authMiddleware = require('../middleware/authMiddleware.js');
 const { verify } = require('jsonwebtoken');
 
-router.get('/login', (req, res) => {
+router.get('/login', (req, res) => {  // great user 
     res.status(200).json({ message : "welcome to mochaPay"});
 });
 router.post('/login', loginUser);
