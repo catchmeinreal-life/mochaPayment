@@ -1,6 +1,12 @@
-{"code":"rate-limited","message":"You have hit the rate limit. Please upgrade to keep chatting.","providerLimitHit":false,"isRetryable":true}
 
 
+function Dashboard() {
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      <p>Welcome to your dashboard!</p>
+    </div>
+  );
+}
 
-
-
+export default Dashboard;
