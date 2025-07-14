@@ -4,6 +4,7 @@ import { authService  } from '../services/mochaPayment';
 import { ToastContainer, toast } from "react-toastify";
 
 import '../styles/signinPage.css'; //styling
+import '../styles/global.css';
 
 //components
 import NavBar from '../components/NavBar';
@@ -69,7 +70,7 @@ function SignIn() {
       <Navigate to="/" replace />
     ) : (
       <>
-        <NavBar/>
+        <NavBar isAuthenticated={isAuthenticated} />
         <div className="signin-page">
           <div className='message'>
             <p>{ message ? message : error}</p>
