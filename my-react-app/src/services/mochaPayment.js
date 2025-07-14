@@ -41,7 +41,8 @@ MochaApi.interceptors.response.use(
 
       // Forbidden access
       if (status === 403) {
-        alert('Access denied. You don't have permission to do that.');
+        alert('Access denied. You don\'t have permission to do that.');
+        )
       }
 
       // Server error
@@ -68,3 +69,5 @@ export const authService = {
     
     return response.data;
   },
+
+}
