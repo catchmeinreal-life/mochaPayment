@@ -1,19 +1,54 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import '../styles/navbar.css';
 
-function NavBar() {
+function NavBar({ isAuthenticated, onLogout }) {
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
     return (
-        <>
         <nav>
-            <ul>
-                <li><Link to='/'>Home</Link></li>
-                <li><Link to='/login'>LogIn</Link></li>
-                <li><Link to='/signin'>SignIn</Link></li>
-            </ul>
+            <div className="navbar">
+                <Link to="/" className="navbar-brand">MochaPay</Link>
+                
+                <button className="navbar-toggle" onClick={toggleMenu}>
+                    ☰
+                </button>
+                
+                <ul className={`navbar-nav ${isMenuOpen ? 'active' : ''}`}>
+                    <li className="nav-item">
+                        <Link to="/" className="nav-link">Home</Link>
+                    </li>
+                    {isAuthenticated ? (
+                        <>
+                            <li className="nav-item">
+                                <Link to="/dashboard" className="nav-link">Dashboard</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to="/payment" className="nav-link">Send Money</Link>
+                            </li>
+                            <li className="nav-item">
+                                <button onClick={onLogout} className="nav-link btn btn-danger btn-sm">
+                                    Logout
+                                </button>
+                            </li>
+                        </>
+                    ) : (
+                        <>
+                            <li className="nav-item">
+                                <Link to="/login" className="nav-link">Login</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to="/signin" className="nav-link">Sign Up</Link>
+                            </li>
+                        </>
+                    )}
+                </ul>
+            </div>
         </nav>
-        </>
     )
 }
 
