@@ -13,7 +13,7 @@ router.get('/login', (req, res) => {
 // User registration
 router.post('/signup', async (req, res) => {
   try {
-    const result = await usersDb.default.registerUser(req.body);
+    const result = await usersDb.registerUser(req.body);
     res.status(201).json(result);
   } catch (error) {
     res.status(400).json({
@@ -26,7 +26,7 @@ router.post('/signup', async (req, res) => {
 // User login
 router.post('/login', async (req, res) => {
   try {
-    const result = await usersDb.default.loginUser(req.body);
+    const result = await usersDb.loginUser(req.body);
     res.status(200).json(result);
   } catch (error) {
     res.status(401).json({
@@ -39,7 +39,7 @@ router.post('/login', async (req, res) => {
 // Token verification
 router.get('/verify/:token', (req, res) => {
   try {
-    const result = usersDb.default.verifyToken(req.params.token);
+    const result = usersDb.verifyToken(req.params.token);
     res.status(200).json(result);
   } catch (error) {
     res.status(401).json({
@@ -61,7 +61,7 @@ router.get('/profile', (req, res) => {
       });
     }
     
-    const result = usersDb.default.verifyToken(token);
+    const result = usersDb.verifyToken(token);
     res.status(200).json({
       success: true,
       data: result.user
