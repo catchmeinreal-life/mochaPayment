@@ -198,6 +198,10 @@ class User {
 }
 
 // Initialize with admin and partner users
+
+/**
+ * const adminSchema = 
+ */
 const demoUsers = [
   { 
     id: 1,
