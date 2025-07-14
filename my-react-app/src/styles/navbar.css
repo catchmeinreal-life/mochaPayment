@@ -1,24 +1,3 @@
-<<<<<<< HEAD
-header{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-evenly;
-    background-color: aliceblue;
-}
-
-.navbar {
-    display: flex;
-    list-style: none;
-    justify-content: space-around;
-}
-.navbar li {
-    margin-left: 10px;
-}
-
-header .header-icon .login-link {
-    margin-right: 10px;
-=======
 /* Navigation styles */
 nav {
   background-color: #fff;
@@ -119,5 +98,4 @@ nav {
     text-align: center;
     padding: 15px;
   }
->>>>>>> 77db332357b2b058776ee53019b8af7265546e37
 }
