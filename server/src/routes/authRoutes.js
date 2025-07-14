@@ -1,28 +1,77 @@
 const express = require('express');
 const router = express.Router();
-
-const {
-    registerUser,
-    loginUser,
-    verifyToken,
-    getUserProfile
-} = require('../controllers/authController');
-
-const { protect } = require('../middleware/authMiddleware');
+const usersDb = require('../config/usersDb');
 
 // Public routes
 router.get('/login', (req, res) => {
-    res.status(200).json({ 
-        success: true,
-        message: "Welcome to MochaPay - Blockchain Payment System" 
-    });
+  res.status(200).json({ 
+    success: true,
+    message: "Welcome to MochaPay - Blockchain Payment System" 
+  });
 });
 
-router.post('/signup', registerUser);
-router.post('/login', loginUser);
-router.get('/verify/:token', verifyToken);
+// User registration
+router.post('/signup', async (req, res) => {
+  try {
+    const result = await usersDb.default.registerUser(req.body);
+    res.status(201).json(result);
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
 
-// Protected routes
-router.get('/profile', protect, getUserProfile);
+// User login
+router.post('/login', async (req, res) => {
+  try {
+    const result = await usersDb.default.loginUser(req.body);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(401).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
+
+// Token verification
+router.get('/verify/:token', (req, res) => {
+  try {
+    const result = usersDb.default.verifyToken(req.params.token);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(401).json({
+      success: false,
+      message: error.message,
+      verified: false
+    });
+  }
+});
+
+// Get user profile (protected route)
+router.get('/profile', (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: 'No token provided'
+      });
+    }
+    
+    const result = usersDb.default.verifyToken(token);
+    res.status(200).json({
+      success: true,
+      data: result.user
+    });
+  } catch (error) {
+    res.status(401).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
 
 module.exports = router;

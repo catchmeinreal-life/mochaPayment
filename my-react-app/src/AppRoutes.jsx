@@ -1,16 +1,8 @@
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { authService } from "./services/mochaPayment";
 
-/** Pages 
- * Home: Public page, accessible to all users.
- * Dashboard: Protected page, accessible only to authenticated users. 
- * Login: Public page, used for user authentication.
- * PaymentForm: Public page, used for making payments. 
- * 
-*/
 import ProtectedRoute from "./components/ProtectedRoute";
-
-
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import SignIn from "./pages/Signin";
@@ -18,36 +10,66 @@ import Dashboard from "./pages/Dashboard";
 import PaymentForm from "./pages/PaymentForm";
 import NotFound from "./pages/NotFound";
 
-
 function AppRoutes() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    setIsAuthenticated(localStorage.getItem("isAuthenticated") === "true");
-    const onStorage = () => setIsAuthenticated(localStorage.getItem("isAuthenticated") === "true");
+    // Check authentication status on mount
+    const checkAuth = () => {
+      const isAuth = authService.isAuthenticated();
+      setIsAuthenticated(isAuth);
+    };
+    
+    checkAuth();
+    
+    // Listen for storage changes (login/logout from other tabs)
+    const onStorage = () => {
+      const isAuth = authService.isAuthenticated();
+      setIsAuthenticated(isAuth);
+    };
+    
     window.addEventListener('storage', onStorage);
     return () => window.removeEventListener('storage', onStorage);
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
+    authService.logout();
     setIsAuthenticated(false);
+    
+    // Trigger storage event for other components
+    window.dispatchEvent(new Event('storage'));
+    
     navigate("/login");
   };
 
   return (
     <Routes>
-      <Route path="/login" element={<Login  isAuthenticated={isAuthenticated}/>} />
-      <Route path="/signin" element={<SignIn  isAuthenticated={isAuthenticated}/>} />
+      <Route path="/login" element={<Login isAuthenticated={isAuthenticated} />} />
+      <Route path="/signin" element={<SignIn isAuthenticated={isAuthenticated} />} />
+      
       {/* Public routes */}
       <Route path="/" element={<Home onLogout={handleLogout} isAuthenticated={isAuthenticated} />} />
-      <Route path="/dashboard" element={<Dashboard onLogout={handleLogout} isAuthenticated={isAuthenticated} />} />
-      <Route path="/payment" element={<PaymentForm onLogout={handleLogout} isAuthenticated={isAuthenticated} />} />
-      <Route path="*" element={<NotFound />} />
-
       
-      {/* Add more routes as needed */}
+      {/* Protected routes */}
+      <Route 
+        path="/dashboard" 
+        element={
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <Dashboard onLogout={handleLogout} isAuthenticated={isAuthenticated} />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/payment" 
+        element={
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <PaymentForm onLogout={handleLogout} isAuthenticated={isAuthenticated} />
+          </ProtectedRoute>
+        } 
+      />
+      
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
