@@ -1,37 +1,28 @@
-/**
- * @file authRoutes.js
- * @description This file contains the authentication routes for user registration and login.
- * 
- */
-
 const express = require('express');
 const router = express.Router();
 
-// const User = require('../config/.js')
+const {
+    registerUser,
+    loginUser,
+    verifyToken,
+    getUserProfile
+} = require('../controllers/authController');
 
-// controllers (validation)
-const validateMovie = require('../controllers/moviesController.js');
-const {loginUser, registerUser, verifyToken} = require('../controllers/authController.js');
-//middleware
-const authMiddleware = require('../middleware/authMiddleware.js');
-const { verify } = require('jsonwebtoken');
+const { protect } = require('../middleware/authMiddleware');
 
-router.get('/login', (req, res) => {  // great user 
-    res.status(200).json({ message : "welcome to mochaPay"});
+// Public routes
+router.get('/login', (req, res) => {
+    res.status(200).json({ 
+        success: true,
+        message: "Welcome to MochaPay - Blockchain Payment System" 
+    });
 });
-router.post('/login', loginUser);
-router.post('/signup', registerUser);
 
-/**
- * validate token
- */
+router.post('/signup', registerUser);
+router.post('/login', loginUser);
 router.get('/verify/:token', verifyToken);
 
-
+// Protected routes
+router.get('/profile', protect, getUserProfile);
 
 module.exports = router;
-
-// ### 🔐 1. Authentication Flow
-// - **Login Endpoint:** Users authenticate via `/api/auth/login` using valid credentials or OAuth (Google/GitHub).
-// - **Token Issuance:** Upon successful login, the server responds with an encrypted JWT token stored in HTTP-only cookies or localStorage.
-// - **Session Validation:** Protected endpoints validate the token on each request using middleware to ensure secure access.
