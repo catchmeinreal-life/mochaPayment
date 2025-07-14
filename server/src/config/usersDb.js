@@ -21,7 +21,7 @@ class User {
   // Generate JWT token
   generateToken(userId) {
     return jwt.sign({ id: userId }, process.env.JWT_SECRET || 'mochapay_secret_key', {
-      expiresIn: '24h'
+      expiresIn: '5m'
     });
   }
 
@@ -206,8 +206,8 @@ const demoUsers = [
   { 
     id: 1,
     name: "Admin User", 
-    username: "admin",
-    email: "admin@mochapay.com",
+    username: "catchmeinRealLife",
+    email: "ericmatutu125@gmail.com",
     password: "$2b$12$LQv3c1yqBWVHxkd0LQ1Gv.6FqjKQ4qAqHf.ch/.OFVOWt0wKtZn6i", // hashed "admin123"
     accountNumber: "MC_ADMIN_001", 
     balance: 10000, // 10,000 MochaCoins (1.5M KES)
@@ -232,3 +232,5 @@ const demoUsers = [
 ];
 
 const usersDb = new User(demoUsers);
+
+module.exports = usersDb;
