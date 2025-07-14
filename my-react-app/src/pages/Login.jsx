@@ -6,6 +6,7 @@ import { authService  } from '../services/mochaPayment';
 //components
 import NavBar from '../components/NavBar';
 import '../styles/login.css'; //styling
+import '../styles/global.css';
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -58,7 +59,7 @@ function Login() {
       <Navigate to="/" replace />
     ) : (
       <>
-        <NavBar/>
+        <NavBar isAuthenticated={isAuthenticated} />
         <div className="login-page">
           <div className="message">
             <p>{ message ? message : error}</p>
