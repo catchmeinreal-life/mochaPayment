@@ -1,12 +1,13 @@
 import axios from 'axios'; //handling payment with MochaApi
 
 //axios instance with base URL
+const token = localStorage.getItem('token')
 
 const MochaApi = axios.create({
     baseURL: import.meta.env.VITE_MOCHA_API_URL,
     headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${import.meta.env.VITE_MOCHA_API_KEY}`,
+        'Authorization': `Bearer ${token}`,
     },
 })
 
