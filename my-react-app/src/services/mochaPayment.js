@@ -90,9 +90,10 @@ export const authService = {
       return response.data;
     },
 
-    signIn: async () => {
+    signIn: async () => {  //greet user
         const response = await MochaApi.get('/auth/login');
-        return response;
+        console.log(response.data.message);
+        return response.data.message;
     },
   
     // verify user
