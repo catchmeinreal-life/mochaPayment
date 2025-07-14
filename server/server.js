@@ -63,12 +63,12 @@ app.get('/contact', (req, res) => {
 });
 
 // 404 handler for API routes
-app.use('/api/*', (req, res) => {
-    res.status(404).json({
-        success: false,
-        message: 'API endpoint not found'
-    });
-});
+// app.use('/api/*', (req, res) => {
+//     res.status(404).json({
+//         success: false,
+//         message: 'API endpoint not found'
+//     });
+// });
 
 // Global error handler
 app.use((error, req, res, next) => {
