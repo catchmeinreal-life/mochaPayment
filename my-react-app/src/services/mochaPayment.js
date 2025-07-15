@@ -112,3 +112,16 @@ export const authService = {
   }
 
 }
+
+
+export const walletService = {
+  getWalletBalance: async () => {
+    const res = await MochaApi.get('/api/wallet/balance');
+    return res.data.data; // returns { accountId, balance, ... }
+  },
+
+  getTransactions: async () => {
+    const res = await MochaApi.get('/api/wallet/transactions');
+    return res.data.data.transactions;
+  }
+};
