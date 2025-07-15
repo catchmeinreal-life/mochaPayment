@@ -35,8 +35,8 @@ const walletSchema = new mongoose.Schema({
 });
 
 // Index for faster queries
-walletSchema.index({ accountId: 1 });
-walletSchema.index({ userId: 1 });
+// walletSchema.index({ accountId: 1 });
+// walletSchema.index({ userId: 1 });
 
 // Method to update balance
 walletSchema.methods.updateBalance = function(amount, type = 'credit') {

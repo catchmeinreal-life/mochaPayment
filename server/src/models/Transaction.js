@@ -56,9 +56,8 @@ transactionSchema.pre('save', function(next) {
 });
 
 // Index for faster queries
-transactionSchema.index({ fromAccountId: 1 });
 transactionSchema.index({ toAccountId: 1 });
-transactionSchema.index({ transactionId: 1 });
+// transactionSchema.index({ transactionId: 1 });
 transactionSchema.index({ createdAt: -1 });
 
 module.exports = mongoose.model('Transaction', transactionSchema);
