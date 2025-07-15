@@ -1,101 +1,157 @@
-// Enhanced User Management System for MochaPay
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
+const User = require('../models/User');
+const Wallet = require('../models/Wallet');
 
-// MochaCoin to KES conversion rate
-const COIN_TO_KES_RATE = 150; // 1 MochaCoin = 150 KES
-const NEW_USER_COINS = 3; // New users get 3 MochaCoins (450 KES value)
+// Constants
+const NEW_USER_COINS = 3;
+const COIN_TO_KES_RATE = 150;
+const JWT_SECRET = process.env.JWT_SECRET || 'mochapay_secret_key';
+const SALT_ROUNDS = 12;
 
-class User {
-  constructor(users) {
-    this.users = users || [];
-  }
-
-  // Generate unique account ID
-  generateAccountId() {
-    const timestamp = Date.now().toString(36);
-    const randomStr = Math.random().toString(36).substring(2, 8);
-    return `MC_${timestamp}_${randomStr}`.toUpperCase();
-  }
-
-  // Generate JWT token
+/**
+ * MongoDB-backed User Management System for MochaPay
+ * Handles user authentication, registration, and token management
+ */
+class UserDatabase {
+  
+  /**
+   * Generate JWT token for user
+   * @param {string} userId - MongoDB ObjectId
+   * @returns {string} JWT token
+   */
   generateToken(userId) {
-    return jwt.sign({ id: userId }, process.env.JWT_SECRET || 'mochapay_secret_key', {
-      expiresIn: '5m'
+    return jwt.sign({ id: userId }, JWT_SECRET, {
+      expiresIn: '24h'
     });
   }
 
-  // Hash password
+  /**
+   * Hash password using bcrypt
+   * @param {string} password - Plain text password
+   * @returns {Promise<string>} Hashed password
+   */
   async hashPassword(password) {
-    const salt = await bcrypt.genSalt(12);
+    const salt = await bcrypt.genSalt(SALT_ROUNDS);
     return await bcrypt.hash(password, salt);
   }
 
-  // Compare password
+  /**
+   * Compare password with hashed password
+   * @param {string} candidatePassword - Plain text password
+   * @param {string} hashedPassword - Hashed password from database
+   * @returns {Promise<boolean>} Password match result
+   */
   async comparePassword(candidatePassword, hashedPassword) {
     return await bcrypt.compare(candidatePassword, hashedPassword);
   }
 
-  // Register new user
+  /**
+   * Register new user with MongoDB persistence
+   * @param {Object} userData - User registration data
+   * @param {string} userData.username - Username
+   * @param {string} userData.email - Email address
+   * @param {string} userData.password - Plain text password
+   * @returns {Promise<Object>} Registration result
+   */
   async registerUser(userData) {
     const { username, email, password } = userData;
 
+    // Validation
+    if (!username || !email || !password) {
+      throw new Error('Username, email, and password are required');
+    }
+
     // Check if user already exists
-    const existingUser = this.users.find(user => 
-      user.email === email || user.username === username
-    );
+    const existingUser = await User.findOne({
+      $or: [{ email }, { username }]
+    });
 
     if (existingUser) {
       throw new Error('User with this email or username already exists');
     }
 
-    // Hash password
-    const hashedPassword = await this.hashPassword(password);
+    // Start MongoDB transaction for atomic user and wallet creation
+    const session = await mongoose.startSession();
+    session.startTransaction();
 
-    // Create new user
-    const newUser = {
-      id: this.users.length + 1,
-      username,
-      email,
-      password: hashedPassword,
-      accountNumber: this.generateAccountId(),
-      balance: NEW_USER_COINS, // 3 MochaCoins for new users
-      role: 'user',
-      createdAt: new Date(),
-      lastLogin: null,
-      isActive: true
-    };
+    try {
+      // Hash password
+      const hashedPassword = await this.hashPassword(password);
 
-    // Deduct coins from admin account
-    const adminUser = this.users.find(user => user.role === 'admin');
-    if (adminUser && adminUser.balance >= NEW_USER_COINS) {
-      adminUser.balance -= NEW_USER_COINS;
+      // Create new user
+      const user = new User({
+        username,
+        email,
+        password: hashedPassword,
+        role: 'user',
+        isActive: true
+      });
+
+      // Generate unique account ID
+      user.accountId = user.generateAccountId();
+
+      // Save user to database
+      await user.save({ session });
+
+      // Create wallet for user
+      const wallet = new Wallet({
+        userId: user._id,
+        accountId: user.accountId,
+        balance: NEW_USER_COINS
+      });
+
+      await wallet.save({ session });
+
+      // Commit transaction
+      await session.commitTransaction();
+
+      // Generate JWT token
+      const token = this.generateToken(user._id);
+
+      // Return user data without password
+      return {
+        success: true,
+        message: 'User registered successfully',
+        user: {
+          id: user._id,
+          username: user.username,
+          email: user.email,
+          accountId: user.accountId,
+          role: user.role
+        },
+        token,
+        coinValue: `${NEW_USER_COINS} MochaCoins (${NEW_USER_COINS * COIN_TO_KES_RATE} KES)`
+      };
+
+    } catch (error) {
+      // Rollback transaction on error
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      // End session
+      session.endSession();
     }
-
-    // Add user to database
-    this.users.push(newUser);
-
-    // Generate token
-    const token = this.generateToken(newUser.id);
-
-    // Return user data without password
-    const { password: _, ...userWithoutPassword } = newUser;
-    
-    return {
-      success: true,
-      message: 'User registered successfully',
-      user: userWithoutPassword,
-      token,
-      coinValue: `${NEW_USER_COINS} MochaCoins (${NEW_USER_COINS * COIN_TO_KES_RATE} KES)`
-    };
   }
 
-  // Login user
+  /**
+   * Login user with MongoDB authentication
+   * @param {Object} credentials - Login credentials
+   * @param {string} credentials.email - Email address
+   * @param {string} credentials.password - Plain text password
+   * @returns {Promise<Object>} Login result
+   */
   async loginUser(credentials) {
     const { email, password } = credentials;
 
+    // Validation
+    if (!email || !password) {
+      throw new Error('Email and password are required');
+    }
+
     // Find user by email
-    const user = this.users.find(u => u.email === email && u.isActive);
+    const user = await User.findOne({ email, isActive: true });
     
     if (!user) {
       throw new Error('Invalid email or password');
@@ -110,127 +166,161 @@ class User {
 
     // Update last login
     user.lastLogin = new Date();
+    await user.save();
 
-    // Generate token
-    const token = this.generateToken(user.id);
+    // Generate JWT token
+    const token = this.generateToken(user._id);
 
     // Return user data without password
-    const { password: _, ...userWithoutPassword } = user;
-    
     return {
       success: true,
       message: 'Login successful',
-      user: userWithoutPassword,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        accountId: user.accountId,
+        role: user.role
+      },
       token
     };
   }
 
-  // Verify token and get user
-  verifyToken(token) {
+  /**
+   * Verify JWT token and get user data
+   * @param {string} token - JWT token
+   * @returns {Promise<Object>} Token verification result
+   */
+  async verifyToken(token) {
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'mochapay_secret_key');
-      const user = this.users.find(u => u.id === decoded.id && u.isActive);
+      // Verify JWT token
+      const decoded = jwt.verify(token, JWT_SECRET);
       
-      if (!user) {
+      // Find user by decoded ID
+      const user = await User.findById(decoded.id).select('-password');
+      
+      if (!user || !user.isActive) {
         throw new Error('User not found or inactive');
       }
 
-      const { password: _, ...userWithoutPassword } = user;
       return {
         success: true,
-        user: userWithoutPassword,
+        user: {
+          id: user._id,
+          username: user.username,
+          email: user.email,
+          accountId: user.accountId,
+          role: user.role
+        },
         verified: true
       };
     } catch (error) {
-      throw new Error('Invalid or expired token');
+      if (error.name === 'JsonWebTokenError') {
+        throw new Error('Invalid or expired token');
+      }
+      if (error.name === 'TokenExpiredError') {
+        throw new Error('Invalid or expired token');
+      }
+      throw error;
     }
   }
 
-  // Get user by ID
-  getUserById(userId) {
-    const user = this.users.find(u => u.id === userId);
+  /**
+   * Get user by MongoDB ObjectId
+   * @param {string} userId - MongoDB ObjectId
+   * @returns {Promise<Object>} User data without password
+   */
+  async getUserById(userId) {
+    const user = await User.findById(userId).select('-password');
+    
     if (!user) {
       throw new Error('User not found');
     }
-    const { password: _, ...userWithoutPassword } = user;
-    return userWithoutPassword;
-  }
 
-  // Make payment between users
-  makePayment(senderAccount, receiverAccount, amount) {
-    const sender = this.users.find(user => user.accountNumber === senderAccount);
-    const receiver = this.users.find(user => user.accountNumber === receiverAccount);
-
-    if (!sender || !receiver) {
-      return { error: "Invalid account number(s)" };
-    }
-
-    if (sender.balance < amount) {
-      return { error: "Insufficient balance" };
-    }
-
-    sender.balance -= amount;
-    receiver.balance += amount;
-
-    return { 
-      message: "Payment successful", 
-      sender: { ...sender, password: undefined }, 
-      receiver: { ...receiver, password: undefined }
+    return {
+      id: user._id,
+      username: user.username,
+      email: user.email,
+      accountId: user.accountId,
+      role: user.role,
+      createdAt: user.createdAt,
+      lastLogin: user.lastLogin,
+      isActive: user.isActive
     };
   }
 
-  // Get user balance
-  getUserBalance(accountNumber) {
-    const user = this.users.find(user => user.accountNumber === accountNumber);
-    if (!user) {
-      return { error: "User not found" };
-    }
-    return { balance: user.balance };
+  /**
+   * Check if user exists by email
+   * @param {string} email - Email address
+   * @returns {Promise<boolean>} User existence status
+   */
+  async userExists(email) {
+    const user = await User.findOne({ email });
+    return !!user;
   }
 
-  // Get all users (without passwords)
-  getAllUsers() {
-    return this.users.map(user => {
-      const { password: _, ...userWithoutPassword } = user;
-      return userWithoutPassword;
+  /**
+   * Get user by account ID
+   * @param {string} accountId - User account ID
+   * @returns {Promise<Object>} User data without password
+   */
+  async getUserByAccountId(accountId) {
+    const user = await User.findOne({ accountId, isActive: true }).select('-password');
+    
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return {
+      id: user._id,
+      username: user.username,
+      email: user.email,
+      accountId: user.accountId,
+      role: user.role
+    };
+  }
+
+  /**
+   * Update user's last login timestamp
+   * @param {string} userId - MongoDB ObjectId
+   * @returns {Promise<void>}
+   */
+  async updateLastLogin(userId) {
+    await User.findByIdAndUpdate(userId, {
+      lastLogin: new Date()
     });
+  }
+
+  /**
+   * Deactivate user account
+   * @param {string} userId - MongoDB ObjectId
+   * @returns {Promise<void>}
+   */
+  async deactivateUser(userId) {
+    await User.findByIdAndUpdate(userId, {
+      isActive: false
+    });
+  }
+
+  /**
+   * Get all active users (admin function)
+   * @returns {Promise<Array>} Array of user objects without passwords
+   */
+  async getAllUsers() {
+    const users = await User.find({ isActive: true }).select('-password');
+    return users.map(user => ({
+      id: user._id,
+      username: user.username,
+      email: user.email,
+      accountId: user.accountId,
+      role: user.role,
+      createdAt: user.createdAt,
+      lastLogin: user.lastLogin
+    }));
   }
 }
 
-// Initialize with admin and partner users
-
-/**
- * const adminSchema = 
- */
-const demoUsers = [
-  { 
-    id: 1,
-    name: "Admin User", 
-    username: "catchmeinRealLife",
-    email: "ericmatutu125@gmail.com",
-    password: "$2b$12$LQv3c1yqBWVHxkd0LQ1Gv.6FqjKQ4qAqHf.ch/.OFVOWt0wKtZn6i", // hashed "admin123"
-    accountNumber: "MC_ADMIN_001", 
-    balance: 10000, // 10,000 MochaCoins (1.5M KES)
-    role: "admin",
-    createdAt: new Date(),
-    lastLogin: null,
-    isActive: true
-  },
-  { 
-    id: 2,
-    name: "Partner User", 
-    username: "partner",
-    email: "partner@mochapay.com",
-    password: "$2b$12$LQv3c1yqBWVHxkd0LQ1Gv.6FqjKQ4qAqHf.ch/.OFVOWt0wKtZn6i", // hashed "partner123"
-    accountNumber: "MC_PARTNER_001", 
-    balance: 5000, // 5,000 MochaCoins (750K KES)
-    role: "partner",
-    createdAt: new Date(),
-    lastLogin: null,
-    isActive: true
-  }
-];
-
-const usersDb = new User(demoUsers);
+// Create and export singleton instance
+const usersDb = new UserDatabase();
 
 module.exports = usersDb;
