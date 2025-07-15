@@ -56,6 +56,11 @@ MochaApi.interceptors.response.use(
 
 // Auth API services
 export const authService = {
+  // Greet User
+  greetUser: async () => {
+    const response = await MochaApi.get('/api/auth/message');
+    return response.data;
+  },
   // Register a new user
   register: async (userData) => {
     const response = await MochaApi.post('/api/auth/signup', userData);

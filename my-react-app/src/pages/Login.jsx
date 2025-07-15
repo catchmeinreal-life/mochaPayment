@@ -17,7 +17,7 @@ function Login({ isAuthenticated }) {
   useEffect(() => {
     const greetUser = async () => {
       try {
-        const response = await authService.signIn();
+        const response = await authService.greetUser();
         setMessage(response.message);
       } catch (error) {
         console.error('Error fetching welcome message:', error);

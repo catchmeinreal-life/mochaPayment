@@ -3,7 +3,7 @@ const router = express.Router();
 const usersDb = require('../config/usersDb');
 
 // Public routes
-router.get('/login', (req, res) => {
+router.get('/message', (req, res) => {
   res.status(200).json({ 
     success: true,
     message: "Welcome to MochaPay - Blockchain Payment System" 
