@@ -73,8 +73,8 @@ class UserDatabase {
     }
 
     // Start MongoDB transaction for atomic user and wallet creation
-    const session = await mongoose.startSession();
-    session.startTransaction();
+    // const session = await mongoose.startSession();
+    // session.startTransaction();
 
     try {
       // Hash password
@@ -93,7 +93,8 @@ class UserDatabase {
       user.accountId = user.generateAccountId();
 
       // Save user to database
-      await user.save({ session });
+      // await user.save({ session });
+      await user.save();
 
       // Create wallet for user
       const wallet = new Wallet({
@@ -102,10 +103,11 @@ class UserDatabase {
         balance: NEW_USER_COINS
       });
 
-      await wallet.save({ session });
+      // await wallet.save({ session });
+      await wallet.save();
 
       // Commit transaction
-      await session.commitTransaction();
+      // await session.commitTransaction();
 
       // Generate JWT token
       const token = this.generateToken(user._id);
@@ -127,11 +129,11 @@ class UserDatabase {
 
     } catch (error) {
       // Rollback transaction on error
-      await session.abortTransaction();
+      // await session.abortTransaction();
       throw error;
     } finally {
       // End session
-      session.endSession();
+      // session.endSession();
     }
   }
 
