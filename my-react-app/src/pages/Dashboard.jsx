@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/dashboard.css';
-import { authService } from '../services/mochaPayment';
-import MochaApi from '../services/mochaPayment';
+import { walletService } from '../services/mochaPayment';
 import NavBar from '../components/NavBar';
 
 export default function Dashboard({ isAuthenticated, onLogout }) {
@@ -13,26 +12,19 @@ export default function Dashboard({ isAuthenticated, onLogout }) {
     const storedUser = JSON.parse(localStorage.getItem('user'));
     setUser(storedUser);
 
-    const fetchWallet = async () => {
-      try {
-        const res = await MochaApi.get('/api/wallet/balance');
-        setWallet(res.data.data);
-      } catch (err) {
-        console.error('Failed to fetch wallet:', err);
-      }
-    };
+    const loadDashboardData = async () => {
+    try {
+      const walletData = await walletService.getWalletBalance();
+      setWallet(walletData);
 
-    const fetchTransactions = async () => {
-      try {
-        const res = await MochaApi.get('/api/wallet/transactions');
-        setTransactions(res.data.data.transactions);
-      } catch (err) {
-        console.error('Failed to fetch transactions:', err);
-      }
-    };
+      const txData = await walletService.getTransactions();
+      setTransactions(txData);
+    } catch (err) {
+      console.error('Dashboard data load error:', err);
+    }
+  };
 
-    fetchWallet();
-    fetchTransactions();
+  loadDashboardData();
   }, []);
 
   return (
