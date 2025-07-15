@@ -11,7 +11,7 @@ const seedPrimeUsers = async () => {
         if (!adminUser) {
             adminUser = new User({
                 username: 'admin',
-                email: 'admin@mochapay.com',
+                email: 'ericmatutu125@gmail.com',
                 password: 'admin123', // This will be hashed automatically
                 accountId: process.env.ADMIN_ACCOUNT_ID,
                 role: 'admin'
