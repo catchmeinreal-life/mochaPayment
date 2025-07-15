@@ -1,6 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const usersDb = require('../config/usersDb');
+
+/**Authentication controllers for user
+ * registration & login
+ * 
+ */
+const { registerUser, loginUser } = require('../controllers/authController')
 
 // Public routes
 router.get('/message', (req, res) => {
@@ -11,30 +16,10 @@ router.get('/message', (req, res) => {
 });
 
 // User registration
-router.post('/signup', async (req, res) => {
-  try {
-    const result = await usersDb.registerUser(req.body);
-    res.status(201).json(result);
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: error.message
-    });
-  }
-});
+router.post('/signup', registerUser);
 
 // User login
-router.post('/login', async (req, res) => {
-  try {
-    const result = await usersDb.loginUser(req.body);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(401).json({
-      success: false,
-      message: error.message
-    });
-  }
-});
+router.post('/login', loginUser);
 
 // Token verification
 router.get('/verify/:token', (req, res) => {
