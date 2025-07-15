@@ -69,4 +69,41 @@ export const authService = {
     return response.data;
   },
 
+  login: async (credentials) => {
+    const response = await MochaApi.post('/api/auth/login', credentials);
+
+    if (response.data.success && response.data.token) {
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      localStorage.setItem('isAuthenticated', 'true');
+    }
+
+    return response.data;
+  },
+
+  logout: () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('isAuthenticated');
+    window.location.href = '/login';
+  },
+
+  checkIsAuthenticated: () => {
+    const token = localStorage.getItem('token');
+    return !!token;
+  },
+
+  verifyToken: async () => {
+    const token = localStorage.getItem('token');
+    if (!token) return { verified: false };
+
+    try {
+      const response = await MochaApi.get(`/api/auth/verify/${token}`);
+      return response.data;
+    } catch (err) {
+      console.error('Token verification failed:', err);
+      return { verified: false };
+    }
+  }
+
 }
