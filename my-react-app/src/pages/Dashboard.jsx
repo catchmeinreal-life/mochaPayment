@@ -20,7 +20,7 @@ export default function Dashboard({ isAuthenticated, onLogout }) {
       const txData = await walletService.getTransactions();
       setTransactions(txData);
     } catch (err) {
-      console.error('Dashboard data load error:', err);
+      console.error('Dashboard data load error:', err.message);
     }
   };
 
