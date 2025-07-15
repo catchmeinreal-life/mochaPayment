@@ -16,8 +16,8 @@ function AppRoutes() {
 
   useEffect(() => {
     // Check authentication status on mount
-    const checkAuth = () => {
-      const isAuth = authService.isAuthenticated();
+    const checkAuth = async () => {
+      const isAuth = await authService.checkIsAuthenticated();
       setIsAuthenticated(isAuth);
     };
     
@@ -25,7 +25,7 @@ function AppRoutes() {
     
     // Listen for storage changes (login/logout from other tabs)
     const onStorage = () => {
-      const isAuth = authService.isAuthenticated();
+      const isAuth = authService.checkIsAuthenticated();
       setIsAuthenticated(isAuth);
     };
     
