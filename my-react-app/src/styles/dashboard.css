@@ -78,43 +78,43 @@
   font-size: 1rem;
 }
 
-+.stat-sublabel {
-+  color: #888;
-+  font-size: 0.8rem;
-+  margin-top: 2px;
-+}
-+
-+/* User info card */
-+.user-info-card {
-+  margin-bottom: 30px;
-+}
-+
-+.info-row {
-+  display: flex;
-+  justify-content: space-between;
-+  align-items: center;
-+  padding: 10px 0;
-+  border-bottom: 1px solid #f0f0f0;
-+}
-+
-+.info-row:last-child {
-+  border-bottom: none;
-+}
-+
-+.info-label {
-+  font-weight: 600;
-+  color: #555;
-+}
-+
-+.info-value {
-+  color: #333;
-+}
-+
-+.status-active {
-+  color: #28a745;
-+  font-weight: 600;
-+}
-+
+.stat-sublabel {
+  color: #888;
+  font-size: 0.8rem;
+  margin-top: 2px;
+}
+
+/* User info card */
+.user-info-card {
+  margin-bottom: 30px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #555;
+}
+
+.info-value {
+  color: #333;
+}
+
+.status-active {
+  color: #28a745;
+  font-weight: 600;
+}
+
 .dashboard-actions {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
