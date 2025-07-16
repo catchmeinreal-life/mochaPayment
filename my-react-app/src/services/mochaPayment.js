@@ -77,9 +77,9 @@ export const authService = {
   login: async (credentials) => {
     const response = await MochaApi.post('/api/auth/login', credentials);
 
-    if (response.data.success && response.data.token) {
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+    if (response.data.success && response.data.data.token) {
+      localStorage.setItem('token', response.data.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.data.user));
       localStorage.setItem('isAuthenticated', 'true');
     }
 
