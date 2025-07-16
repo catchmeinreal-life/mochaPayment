@@ -41,7 +41,7 @@ function SignIn({ isAuthenticated }) {
       const response = await authService.register(userData);
       
       if (response.success) {
-        toast.success(`🎉 Welcome ${response.user.username}! You've received ${response.coinValue}!`);
+        toast.success(`🎉 Welcome ${response.data.user.username}! You've received ${response.data.wallet.balance}!`);
         
         // Trigger storage event for other components
         window.dispatchEvent(new Event('storage'));
