@@ -23,6 +23,7 @@ body {
 .row {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center; /* ✅ Centers the child horizontally */
   margin: 0 -15px;
 }
 
@@ -39,6 +40,11 @@ body {
 .col-8 { flex: 0 0 66.666667%; }
 .col-12 { flex: 0 0 100%; }
 
+.col-md-6 {
+  flex: 0 0 50%;
+  max-width: 50%;
+  padding: 0 15px;
+}
 /* Button styles */
 .btn {
   display: inline-block;
@@ -188,7 +194,11 @@ body {
     padding: 0 15px;
   }
   
-  .col-md-6 { flex: 0 0 50%; }
+  .col-md-6 {
+    flex: 0 0 100%;
+    max-width: 60%;
+    padding: 0 15px;
+  }
   .col-md-12 { flex: 0 0 100%; }
   
   .btn {
