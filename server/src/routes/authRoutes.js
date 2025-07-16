@@ -5,7 +5,7 @@ const router = express.Router();
  * registration & login
  * 
  */
-const { registerUser, loginUser } = require('../controllers/authController')
+const { registerUser, loginUser, verifyToken } = require('../controllers/authController')
 
 // Public routes
 router.get('/message', (req, res) => {
@@ -22,18 +22,7 @@ router.post('/signup', registerUser);
 router.post('/login', loginUser);
 
 // Token verification
-router.get('/verify/:token', (req, res) => {
-  try {
-    const result = usersDb.verifyToken(req.params.token);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(401).json({
-      success: false,
-      message: error.message,
-      verified: false
-    });
-  }
-});
+router.get('/verify/:token', verifyToken);
 
 // Get user profile (protected route)
 router.get('/profile', (req, res) => {
