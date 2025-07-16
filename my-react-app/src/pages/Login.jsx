@@ -34,7 +34,7 @@ function Login({ isAuthenticated }) {
       const response = await authService.login({ email, password });
       
       if (response.success) {
-        toast.success(`Welcome back, ${response.user.username}!`);
+        toast.success(`Welcome back, ${response.data.user.username}!`);
         
         // Trigger storage event for other components
         window.dispatchEvent(new Event('storage'));
