@@ -46,7 +46,7 @@ const transactionSchema = new mongoose.Schema({
 });
 
 // Generate transaction ID
-transactionSchema.pre('save', function(next) {
+transactionSchema.pre('validate', function(next) {
     if (!this.transactionId) {
         const timestamp = Date.now().toString(36);
         const randomStr = Math.random().toString(36).substring(2, 8);
