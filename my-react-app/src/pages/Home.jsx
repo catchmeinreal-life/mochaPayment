@@ -36,7 +36,7 @@ export default function Home({ onLogout, isAuthenticated }) {
           <div className="col-12">
             <div className="card">
               <div className="card-header text-center">
-                <h1>Welcome to MochaPay</h1>
+                <h1>Welcome to MochaPay! {user?.username}</h1>
                 <p>Your trusted digital payment solution</p>
               </div>
               <div className="card-body">
