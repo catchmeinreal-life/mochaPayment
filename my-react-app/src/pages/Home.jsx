@@ -10,23 +10,25 @@ export default function Home({ onLogout, isAuthenticated }) {
   const [wallet, setWallet] = useState(null);
 
   useEffect(() => {
-      const storedUser = JSON.parse(localStorage.getItem('user'));
-      setUser(storedUser);
-  
-      const loadDashboardData = async () => {
+  const storedUser = JSON.parse(localStorage.getItem('user'));
+  setUser(storedUser);
+
+  if (isAuthenticated) {
+    const loadDashboardData = async () => {
       try {
         const walletData = await walletService.getWalletBalance();
         setWallet(walletData);
-  
+
         const txData = await walletService.getTransactions();
         setTransactions(txData);
       } catch (err) {
         console.error('Dashboard data load error:', err.message);
       }
     };
-  
+
     loadDashboardData();
-    }, []);
+  }
+}, [isAuthenticated]);
 
   return (
     <>
