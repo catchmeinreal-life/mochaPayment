@@ -10,11 +10,11 @@ const seedPrimeUsers = async () => {
         
         if (!adminUser) {
             adminUser = new User({
-                username: 'admin',
-                email: 'ericmatutu125@gmail.com',
-                password: 'admin123', // This will be hashed automatically
+                username: process.env.ADMIN_ACCOUNT_USERNAME,
+                email: process.env.ADMIN_ACCOUNT_EMAIL,
+                password: process.env.ADMIN_ACCOUNT_PASS,
                 accountId: process.env.ADMIN_ACCOUNT_ID,
-                role: 'admin'
+                role: process.env.ADMIN_ACCOUNT_ROLE
             });
             await adminUser.save();
             console.log('Admin user created');
@@ -23,7 +23,7 @@ const seedPrimeUsers = async () => {
             const adminWallet = new Wallet({
                 userId: adminUser._id,
                 accountId: adminUser.accountId,
-                balance: parseInt(process.env.ADMIN_INITIAL_BALANCE) || 1000000
+                balance: parseInt(process.env.ADMIN_INITIAL_BALANCE)
             });
             await adminWallet.save();
             console.log('Admin wallet created with balance:', adminWallet.balance);
@@ -34,11 +34,11 @@ const seedPrimeUsers = async () => {
         
         if (!partnerUser) {
             partnerUser = new User({
-                username: 'partner',
-                email: 'partner@mochapay.com',
-                password: 'partner123', // This will be hashed automatically
+                username: process.env.PARTNER_ACCOUNT_USERNAME,
+                email: process.env.PARTNER_ACCOUNT_EMAIL,
+                password: process.env.PARTNER_ACCOUNT_PASS, // This will be hashed automatically
                 accountId: process.env.PARTNER_ACCOUNT_ID,
-                role: 'partner'
+                role: process.env.PARTNER_ACCOUNT_ROLE
             });
             await partnerUser.save();
             console.log('Partner user created');
