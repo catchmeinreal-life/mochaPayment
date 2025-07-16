@@ -10,11 +10,12 @@ const generateToken = (userId) => {
     });
 };
 
-// Generate random balance for new users
-const generateRandomBalance = () => {
-    const min = parseInt(process.env.NEW_USER_MIN_BALANCE) || 100;
-    const max = parseInt(process.env.NEW_USER_MAX_BALANCE) || 1000;
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+/**
+ * new users receieve 
+ * 3 mochaCoins
+ */
+const initialAward = () => {
+    return parseInt(process.env.NEW_USER_COINS);
 };
 
 // Get prime user wallet for balance allocation
@@ -68,7 +69,7 @@ exports.registerUser = async (req, res) => {
         await user.save();
 
         // Generate random balance for new user
-        const initialBalance = generateRandomBalance();
+        const initialBalance = initialAward();
 
         // Create wallet for user
         const wallet = new Wallet({
