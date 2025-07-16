@@ -1,8 +1,33 @@
 import NavBar from "../components/NavBar";
+import { Link } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { walletService } from '../services/mochaPayment';
 import '../styles/global.css';
 
 
 export default function Home({ onLogout, isAuthenticated }) {
+  const [user, setUser] = useState(null);
+  const [wallet, setWallet] = useState(null);
+
+  useEffect(() => {
+      const storedUser = JSON.parse(localStorage.getItem('user'));
+      setUser(storedUser);
+  
+      const loadDashboardData = async () => {
+      try {
+        const walletData = await walletService.getWalletBalance();
+        setWallet(walletData);
+  
+        const txData = await walletService.getTransactions();
+        setTransactions(txData);
+      } catch (err) {
+        console.error('Dashboard data load error:', err.message);
+      }
+    };
+  
+    loadDashboardData();
+    }, []);
+
   return (
     <>
       <NavBar isAuthenticated={isAuthenticated} onLogout={onLogout} />
@@ -26,8 +51,9 @@ export default function Home({ onLogout, isAuthenticated }) {
                           <div className="card-body text-center">
                             <h3>💰</h3>
                             <h5>Account Balance</h5>
-                            <p className="text-muted">$2,450.00</p>
-                            <a href="/dashboard" className="btn btn-primary">View Dashboard</a>
+                            <p className="text-muted">{wallet?.balance ?? '---'} ɱ</p>
+                            {/* <a href="/dashboard" className="btn btn-primary">View Dashboard</a> */}
+                            <Link to="/dashboard" className="btn btn-primary">View Dashboard</Link>
                           </div>
                         </div>
                       </div>
@@ -37,7 +63,8 @@ export default function Home({ onLogout, isAuthenticated }) {
                             <h3>💸</h3>
                             <h5>Send Money</h5>
                             <p className="text-muted">Transfer funds instantly</p>
-                            <a href="/payment" className="btn btn-success">Send Now</a>
+                            {/* <a href="/payment" className="btn btn-success">Send Now</a> */}
+                            <Link to="/payment" className="btn btn-success">Send Now</Link>
                           </div>
                         </div>
                       </div>
