@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from "react-router-dom";
 import '../styles/dashboard.css';
 import { walletService } from '../services/mochaPayment';
 import NavBar from '../components/NavBar';
@@ -69,12 +70,12 @@ export default function Dashboard({ isAuthenticated, onLogout }) {
         </div>
 
         <div className="dashboard-actions">
-          <a href="/payment" className="action-btn">
+          <Link to="/payment" className="action-btn">
             <i className="fa fa-paper-plane"></i> Send MochaCoins
-          </a>
-          <a href="/transactions" className="action-btn">
+          </Link>
+          <Link to="/transactions" className="action-btn">
             <i className="fa fa-list"></i> View Full History
-          </a>
+          </Link>
         </div>
 
         <div className="recent-transactions">
