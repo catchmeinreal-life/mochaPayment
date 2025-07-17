@@ -98,7 +98,8 @@ export default function Home({ onLogout, isAuthenticated }) {
                       </div>
                     </div>
                     <div className="mt-3">
-                      <a href="/login" className="btn btn-primary">Get Started</a>
+                      <Link to="/login" className="btn btn-primary">Get Started.</Link>
+                      {/* <a href="/login" className="btn btn-primary">Get Started</a> */}
                     </div>
                   </div>
                 )}
