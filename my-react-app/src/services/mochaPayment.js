@@ -2,7 +2,7 @@ import axios from 'axios'; //handling payment with MochaApi
 
 //axios instance with base URL
 const MochaApi = axios.create({
-  baseURL: import.meta.env.VITE_MOCHA_API_URL || 'http://localhost:3000',
+  baseURL: import.meta.env.VITE_MOCHA_API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
