@@ -1,30 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import NavBar from '../components/NavBar';
 import '../styles/payment.css';
 import '../styles/global.css';
-
+import { walletService } from '../services/mochaPayment';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function PaymentForm({ onLogout, isAuthenticated }) {
-  const [ sender, setSender] = useState('');
-  const [ receiver, setReceiver] = useState('');
-  const [ amount, setAmount] = useState('');
-  const [ paymentMethod, setPaymentMethod] = useState('wallet');
-  const [ note, setNote] = useState('');
-  const [ selectedQuickAmount, setSelectedQuickAmount] = useState(null);
-  
-  // Dummy data
-  const userAccounts = [
-    { id: '123456789', name: 'Main Account', balance: 2450.75 },
-    { id: '987654321', name: 'Savings Account', balance: 5200.00 },
-  ];
-  
-  const quickAmounts = [50, 100, 200, 500, 1000];
-  
-  const recentContacts = [
-    { id: '111222333', name: 'John Doe', avatar: '👨' },
-    { id: '444555666', name: 'Sarah Wilson', avatar: '👩' },
-    { id: '777888999', name: 'Mike Johnson', avatar: '👨‍💼' },
-  ];
+  const [toAccountId, settoAccountId] = useState('');
+  const [amount, setAmount] = useState('');
+  const [description, setdescription] = useState('');
+  const [selectedQuickAmount, setSelectedQuickAmount] = useState(null);
+
+  const [wallet, setWallet] = useState(null);
+  const [transactions, setTransactions] = useState([]);
+
+  const quickAmounts = [1, 3, 5, 7, 9];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const walletData = await walletService.getWalletBalance();
+        setWallet(walletData);
+
+        const txData = await walletService.getTransactions();
+        setTransactions(txData);
+      } catch (err) {
+        toast.error('Failed to load wallet data');
+        console.error('PaymentForm init error:', err.message);
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleQuickAmount = (quickAmount) => {
     setAmount(quickAmount.toString());
@@ -32,39 +39,54 @@ function PaymentForm({ onLogout, isAuthenticated }) {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // prevent default form submission
+    e.preventDefault();
 
-    alert("form submitted");
-    // validate input
-    if (!sender || !receiver || !amount) {
-      alert("Please fill in all fields");
+    if (!toAccountId || !amount) {
+      toast.warn("Please fill in all fields");
       return;
     }
 
     if (isNaN(amount) || Number(amount) <= 0) {
-      alert("Please enter a valid amount");
+      toast.warn("Please enter a valid amount");
       return;
     }
-    // make the payment request
+
     try {
-      const response = await fetch('http://localhost:3000/pay', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({sender, receiver, amount: Number(amount)})
-      })
+      const body = JSON.stringify({
+        toAccountId,
+        amount: Number(amount),
+        description,
+      });
 
-      const data = await response.json();
-      console.log(data);
+      const response = await walletService.makeTransaction(body);
 
-      alert(data.message || data.error);
+      if (response?.success) {
+        toast.success('✅ Transaction successful!');
+        settoAccountId('');
+        setAmount('');
+        setdescription('');
+        setSelectedQuickAmount(null);
+
+        // refresh wallet and transaction data
+        const updatedWallet = await walletService.getWalletBalance();
+        setWallet(updatedWallet);
+
+        const txData = await walletService.getTransactions();
+        setTransactions(txData);
+      } else {
+        toast.error(response?.message || 'Transaction failed.');
+      }
+
     } catch (error) {
-      console.error("payment error: ", error)
+      console.error("Payment error: ", error);
+      toast.error("Something went wrong during the transaction.");
     }
-  }
+  };
 
   return (
     <>
       <NavBar isAuthenticated={isAuthenticated} onLogout={onLogout} />
+      <ToastContainer position="top-right" autoClose={3000} />
       <div className="payment-container">
         {isAuthenticated ? (
           <>
@@ -81,188 +103,125 @@ function PaymentForm({ onLogout, isAuthenticated }) {
 
               <form onSubmit={handleSubmit}>
                 <div className="payment-form-body">
-                  <div className="form-row">
-                    <div className="form-col">
-                      <div className="form-group">
-                        <label className="form-label">From Account</label>
-                        <select 
-                          className="account-dropdown form-control"
-                          value={sender} 
-                          onChange={(e) => setSender(e.target.value)}
-                          required
-                        >
-                          <option value="">Select account</option>
-                          {userAccounts.map(account => (
-                            <option key={account.id} value={account.id}>
-                              {account.name} - ${account.balance.toFixed(2)}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-                    <div className="form-col">
-                      <div className="form-group">
-                        <label className="form-label">To Account</label>
-                        <input 
-                          type="text" 
-                          className="form-control"
-                          placeholder="Enter account number or email"
-                          value={receiver} 
-                          onChange={(e) => setReceiver(e.target.value)}
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
 
+                  {/* From Wallet */}
                   <div className="form-group">
-                    <label className="form-label">Recent Contacts</label>
-                    <div className="quick-amounts">
-                      {recentContacts.map(contact => (
-                        <button
-                          key={contact.id}
-                          type="button"
-                          className={`quick-amount-btn ${receiver === contact.id ? 'active' : ''}`}
-                          onClick={() => setReceiver(contact.id)}
-                        >
-                          {contact.avatar} {contact.name}
-                        </button>
-                      ))}
-                    </div>
+                    <label className="form-label">From Wallet</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={`${wallet?.accountId ?? '---'} | Balance: ${wallet?.balance ?? '---'} MC`}
+                      disabled
+                    />
                   </div>
 
+                  {/* To Account */}
+                  <div className="form-group">
+                    <label className="form-label">To Account</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter recipient account ID"
+                      value={toAccountId}
+                      onChange={(e) => settoAccountId(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  {/* Amount */}
                   <div className="form-group">
                     <label className="form-label">Amount</label>
                     <div className="amount-input-container">
-                      <span className="currency-symbol">$</span>
-                      <input 
-                        type="number" 
+                      <span className="currency-symbol"></span>
+                      <input
+                        type="number"
                         className="form-control amount-input"
                         placeholder="0.00"
-                        value={amount} 
+                        value={amount}
                         onChange={(e) => {
                           setAmount(e.target.value);
                           setSelectedQuickAmount(null);
                         }}
-                        step="0.01"
-                        min="0.01"
+                        min="0"
                         required
                       />
                     </div>
                     <div className="quick-amounts">
-                      {quickAmounts.map(quickAmount => (
+                      {quickAmounts.map((quickAmount) => (
                         <button
                           key={quickAmount}
                           type="button"
                           className={`quick-amount-btn ${selectedQuickAmount === quickAmount ? 'active' : ''}`}
                           onClick={() => handleQuickAmount(quickAmount)}
                         >
-                          ${quickAmount}
+                          {quickAmount} MC
                         </button>
                       ))}
                     </div>
                   </div>
 
+                  {/* Description */}
                   <div className="form-group">
-                    <label className="form-label">Note (Optional)</label>
-                    <input 
-                      type="text" 
+                    <label className="form-label">Description (optional)</label>
+                    <input
+                      type="text"
                       className="form-control"
                       placeholder="What's this for?"
-                      value={note} 
-                      onChange={(e) => setNote(e.target.value)}
+                      value={description}
+                      onChange={(e) => setdescription(e.target.value)}
                     />
                   </div>
 
-                  <div className="payment-methods">
-                    <label className="form-label">Payment Method</label>
-                    <div className="payment-method selected">
-                      <input 
-                        type="radio" 
-                        name="paymentMethod" 
-                        value="wallet" 
-                        checked={paymentMethod === 'wallet'}
-                        onChange={(e) => setPaymentMethod(e.target.value)}
-                      />
-                      <div className="payment-method-info">
-                        <div className="payment-method-name">💰 Wallet Balance</div>
-                        <div className="payment-method-desc">Instant transfer from your wallet</div>
-                      </div>
-                    </div>
-                    <div className="payment-method">
-                      <input 
-                        type="radio" 
-                        name="paymentMethod" 
-                        value="bank" 
-                        checked={paymentMethod === 'bank'}
-                        onChange={(e) => setPaymentMethod(e.target.value)}
-                      />
-                      <div className="payment-method-info">
-                        <div className="payment-method-name">🏦 Bank Account</div>
-                        <div className="payment-method-desc">Transfer from linked bank account</div>
-                      </div>
-                    </div>
-                  </div>
-
+                  {/* Payment Summary */}
                   {amount && (
                     <div className="payment-summary">
                       <div className="summary-row">
                         <span>Amount:</span>
-                        <span>${parseFloat(amount || 0).toFixed(2)}</span>
+                        <span>{parseFloat(amount || 0).toFixed(2)} MC</span>
                       </div>
                       <div className="summary-row">
                         <span>Fee:</span>
-                        <span>$0.00</span>
+                        <span>0.00 MC</span>
                       </div>
                       <div className="summary-row total">
                         <span>Total:</span>
-                        <span>${parseFloat(amount || 0).toFixed(2)}</span>
+                        <span>{parseFloat(amount || 0).toFixed(2)} MC</span>
                       </div>
                     </div>
                   )}
-                </div>
 
-                <div className="submit-section">
-                  <button type="submit" className="submit-btn">
-                    Send ${parseFloat(amount || 0).toFixed(2)}
-                  </button>
+                  {/* Submit Button */}
+                  <div className="submit-section">
+                    <button type="submit" className="submit-btn">
+                      Send {parseFloat(amount || 0).toFixed(2)} MC
+                    </button>
+                  </div>
                 </div>
               </form>
             </div>
 
+            {/* Transaction History */}
             <div className="transaction-history">
               <div className="history-header">
                 <h3>Transaction History</h3>
-                <div className="filter-buttons">
-                  <button className="filter-btn active">All</button>
-                  <button className="filter-btn">Sent</button>
-                  <button className="filter-btn">Received</button>
-                  <button className="filter-btn">Pending</button>
-                </div>
               </div>
               <div className="card">
                 <div className="card-body">
-                  <div className="transaction-item">
-                    <div className="transaction-info">
-                      <div className="transaction-type">Money Sent to John Doe</div>
-                      <div className="transaction-date">January 15, 2025 • 2:30 PM</div>
-                    </div>
-                    <div className="transaction-amount negative">-$150.00</div>
-                  </div>
-                  <div className="transaction-item">
-                    <div className="transaction-info">
-                      <div className="transaction-type">Money Received from Sarah Wilson</div>
-                      <div className="transaction-date">January 14, 2025 • 11:45 AM</div>
-                    </div>
-                    <div className="transaction-amount positive">+$300.00</div>
-                  </div>
-                  <div className="transaction-item">
-                    <div className="transaction-info">
-                      <div className="transaction-type">Money Sent to Mike Johnson</div>
-                      <div className="transaction-date">January 12, 2025 • 4:15 PM</div>
-                    </div>
-                    <div className="transaction-amount negative">-$75.00</div>
-                  </div>
+                  {transactions.length === 0 ? (
+                    <div className="transaction-item">No transactions found.</div>
+                  ) : (
+                    transactions.slice(0, 5).map(tx => (
+                      <div key={tx.transactionId} className="transaction-item">
+                        <div className="transaction-info">
+                          <div className="transaction-type">{tx.description}</div>
+                          <div className="transaction-date">{new Date(tx.createdAt).toLocaleString()}</div>
+                        </div>
+                        <div className={`transaction-amount ${tx.direction === 'incoming' ? 'positive' : 'negative'}`}>
+                          {tx.direction === 'incoming' ? '+' : '-'}{tx.amount} MC
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
             </div>
@@ -279,8 +238,6 @@ function PaymentForm({ onLogout, isAuthenticated }) {
       </div>
     </>
   );
-};
-
-
+}
 
 export default PaymentForm;
