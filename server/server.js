@@ -31,17 +31,13 @@ app.set('view engine', 'html');
 // Routes
 const authRoutes = require('./src/routes/authRoutes');
 const walletRoutes = require('./src/routes/walletRoutes');
-const moviesRoute = require('./src/routes/moviesRoutes.js');
-const paymentRoute = require('./src/routes/paymentRoutes.js');
+
 
 // API Routes
 app.use('/auth', authRoutes);
 app.use('/api/auth', authRoutes); // Alternative path for frontend compatibility
 app.use('/api/wallet', walletRoutes);
 
-// Legacy routes (keeping for backward compatibility)
-app.use('/movies', moviesRoute);
-app.use('/pay', paymentRoute);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
