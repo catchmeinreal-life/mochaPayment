@@ -12,6 +12,7 @@ import NotFound from "./pages/NotFound";
 
 function AppRoutes() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,6 +20,7 @@ function AppRoutes() {
     const checkAuth = async () => {
       const isAuth = await authService.checkIsAuthenticated();
       setIsAuthenticated(isAuth);
+      setCheckingAuth(false); // Done checking
     };
     
     checkAuth();
@@ -44,33 +46,35 @@ function AppRoutes() {
   };
 
   return (
-    <Routes>
-      <Route path="/login" element={<Login isAuthenticated={isAuthenticated} />} />
-      <Route path="/signin" element={<SignIn isAuthenticated={isAuthenticated} />} />
-      
-      {/* Public routes */}
-      <Route path="/" element={<Home onLogout={handleLogout} isAuthenticated={isAuthenticated} />} />
-      
-      {/* Protected routes */}
-      <Route 
-        path="/dashboard" 
-        element={
-          <ProtectedRoute isAuthenticated={isAuthenticated}>
-            <Dashboard onLogout={handleLogout} isAuthenticated={isAuthenticated} />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/payment" 
-        element={
-          <ProtectedRoute isAuthenticated={isAuthenticated}>
-            <PaymentForm onLogout={handleLogout} isAuthenticated={isAuthenticated} />
-          </ProtectedRoute>
-        } 
-      />
-      
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+     checkingAuth ? <div>Loading...</div> : 
+      <Routes>
+        <Route path="/login" element={<Login isAuthenticated={isAuthenticated} />} />
+        <Route path="/signin" element={<SignIn isAuthenticated={isAuthenticated} />} />
+        
+        {/* Public routes */}
+        <Route path="/" element={<Home onLogout={handleLogout} isAuthenticated={isAuthenticated} />} />
+        
+        {/* Protected routes */}
+        <Route 
+          path="/dashboard" 
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <Dashboard onLogout={handleLogout} isAuthenticated={isAuthenticated} />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/payment" 
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <PaymentForm onLogout={handleLogout} isAuthenticated={isAuthenticated} />
+            </ProtectedRoute>
+          } 
+        />
+        
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+
   );
 }
 
