@@ -2,6 +2,16 @@
 
 MochaPayment is a full-stack digital payment application built with Node.js/Express backend and React frontend. It features user authentication, wallet management, and secure MochaCoin transfers with MongoDB persistence.
 
+
+client and server link
+```
+https://mochapayment-client.onrender.com 
+
+https://mochapayment.onrender.com/
+
+```
+
+
 ## 🚀 Features
 
 ### Authentication & Security
