@@ -44,11 +44,15 @@ function Login({ isAuthenticated }) {
           navigate("/dashboard");
         }, 1000);
       } else {
-        toast.error(response.message || 'Login failed');
+        toast.error(response.message || 'Login failed, Invalid credentials.');
+        setEmail("");
+        setPassword("");
       }
     } catch (error) {
       console.error("Login failed:", error);
       toast.error(error.response?.data?.message || 'Login failed. Please try again.');
+      setEmail("");
+      setPassword("");
     } finally {
       setIsLoading(false);
     }
