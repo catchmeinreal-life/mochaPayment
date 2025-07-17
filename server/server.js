@@ -16,7 +16,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
     origin: process.env.NODE_ENV === 'production' 
-        ? ['https://mochapayment-client.onrender.com'] 
+        ? [process.env.VERCEL_URL] 
         : ['http://localhost:5173', 'http://localhost:3000'],
 }));
 
