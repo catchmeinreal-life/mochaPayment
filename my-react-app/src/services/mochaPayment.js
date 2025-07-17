@@ -75,16 +75,26 @@ export const authService = {
   },
 
   login: async (credentials) => {
+  try {
     const response = await MochaApi.post('/api/auth/login', credentials);
+    const { success, data } = response.data;
 
-    if (response.data.success && response.data.data.token) {
-      localStorage.setItem('token', response.data.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.data.user));
+    if (success && data.token) {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
       localStorage.setItem('isAuthenticated', 'true');
     }
 
     return response.data;
-  },
+  } catch (err) {
+    // makin sure login still returns a consistent shape
+    return {
+      success: false,
+      message: err.response?.data?.message || "Login failed",
+    };
+  }
+}
+,
 
   logout: () => {
     localStorage.removeItem('token');
