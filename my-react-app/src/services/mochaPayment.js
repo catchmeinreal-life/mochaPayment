@@ -119,6 +119,14 @@ export const walletService = {
     const res = await MochaApi.get('/api/wallet/balance');
     return res.data.data; // returns { accountId, balance, ... }
   },
+//transfer coins
+
+  makeTransaction : async (userData) => {
+    const res = await MochaApi.post('api/wallet/transfer', userData)
+
+    console.log("yoh");
+    return res.data;
+  },
 
   getTransactions: async () => {
     const res = await MochaApi.get('/api/wallet/transactions');
