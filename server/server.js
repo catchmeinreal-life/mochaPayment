@@ -21,7 +21,15 @@ app.use(cors({
 }));
 
 // Serve static files from the "public" directory
-app.use(express.static(path.join(__dirname, 'public'))); 
+// Serve static files
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, 'dist')));
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  });
+}
+ 
 
 // Set the views directory and the view engine
 app.set('views', path.join(__dirname, 'views'));
