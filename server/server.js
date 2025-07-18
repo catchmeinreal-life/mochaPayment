@@ -16,7 +16,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
     origin: process.env.NODE_ENV === 'production' 
-        ? [process.env.VERCEL_URL] 
+        ? ['https://mocha-payment-y1ka-44wuwy12a-catchmeinreallifes-projects.vercel.app'] 
         : ['http://localhost:5173', 'http://localhost:3000'],
 }));
 
