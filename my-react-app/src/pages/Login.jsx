@@ -65,15 +65,20 @@ function Login({ isAuthenticated }) {
     ) : (
       <>
         <NavBar isAuthenticated={isAuthenticated} />
-        <div className="login-page">
-          <h1>Login to MochaPay</h1>
-          <div className="message">
-            <p>{message}</p>
+        <div className="login-page"> {/**login page */}
+
+          <h1 className="heading">Login to MochaPay</h1>
+          <div className="msg-info">
+            <p className='msg'>{message}</p> {/**message */}
           </div>
-          <p>Don't have an account? <span><Link to='/signin'>Sign Up</Link></span></p>
+          <div className="google-auth">
+            <h3><a href="">Continue with Google</a></h3>
+          </div>
+
+          <h3>or</h3>         
           
           <form onSubmit={handleLogin}>
-            <div>
+            <div className="input-cont">
               <label htmlFor="email">Email:</label>
               <input 
                 type="email" 
@@ -86,7 +91,7 @@ function Login({ isAuthenticated }) {
                 disabled={isLoading}
               />
             </div>
-            <div>
+            <div className="input-cont">
               <label htmlFor="password">Password:</label>
               <input 
                 type="password" 
@@ -99,11 +104,20 @@ function Login({ isAuthenticated }) {
                 disabled={isLoading}
               />
             </div>
-            
-            <button type="submit" disabled={isLoading}>
-              {isLoading ? 'Logging in...' : 'Login'}
-            </button>
+            <div className="btn-cont">
+              <button className='btn-login' type="submit"     disabled={isLoading}>
+                {isLoading ? 'Logging in...' : 'Login'}
+              </button>
+            </div> 
           </form>
+
+          <div className="features create">
+            <p>no Account?<span><Link to='/signin'>create one</Link></span></p>
+          </div>
+
+          <div className="features reset-pswd">
+            <p><span><Link to='/signin'>forgot password?</Link></span></p>
+          </div>
         </div>
         <ToastContainer position="top-right" autoClose={3000} />
       </>
