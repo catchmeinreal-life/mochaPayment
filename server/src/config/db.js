@@ -1,12 +1,16 @@
 const mongoose = require('mongoose');
 
+
 const connectDB = async () => {
-    try {
-        await mongoose.connect(process.env.MONGO_URI);
+    try {//mongodb://localhost:27017/
+        if (process.env.NODE_ENV === 'production') {
+            await mongoose.connect(process.env.MONGO_URI);
+        }
+        await mongoose.connect(process.env.MONGO_URI_local);
         console.log('connected to mongoDb local');
         
     } catch (error) {
-        console.error(error.message);
+        console.error("problem connecting to database:", error.message);
         process.exit(1);
     }
 }
