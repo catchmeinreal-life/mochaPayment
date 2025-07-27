@@ -6,15 +6,17 @@ const {
     transferCoins,
     getTransactionHistory
 } = require('../controllers/walletController');
+const { transferWithPin } = require('../controllers/transferWithPin');
 
 const { protect } = require('../middleware/authMiddleware');
 
 // All wallet routes are protected
-router.use(protect);
+// router.use(protect);
 
 // Wallet routes
-router.get('/balance', getWalletBalance);
-router.post('/transfer', transferCoins);
-router.get('/transactions', getTransactionHistory);
+router.get('/balance', protect, getWalletBalance);
+router.post('/transfer', protect, transferCoins);
+router.get('/transactions', protect, getTransactionHistory);
+router.post('/transfer/pin', transferWithPin);
 
 module.exports = router;
