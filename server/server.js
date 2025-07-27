@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({
     origin: process.env.NODE_ENV === 'production' 
         ? ['https://mochapayment-client.onrender.com', 'https://mochapay-express.onrender.com' ] 
-        : ['http://localhost:5173'],
+        : ['http://localhost:5173', 'http://localhost:5174'],
 }));
 
 // Serve static files from the "public" directory
